@@ -2,6 +2,10 @@
 loadrt hostmot2
 loadrt hm2_eth board_ip=192.168.1.121 config="sserial_port_0=2"
 
+# Laadt de motion controller (motmod) en stelt de servo-thread in op 1 kHz (1000 µs).
+# Dit bepaalt hoe vaak de motion control berekeningen worden uitgevoerd.
+loadrt motmod servo_period=1000000
+
 # Voeg de servo-thread toe
 addf hm2_7i94.0.read servo-thread
 addf hm2_7i94.0.write servo-thread
