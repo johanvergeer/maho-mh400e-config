@@ -1,3 +1,4 @@
+loadrt [KINS]KINEMATICS
 # Laad de Hostmot2 en Ethernet driver
 loadrt hostmot2
 loadrt hm2_eth board_ip=192.168.1.121 config="sserial_port_0=2"
