@@ -1,44 +1,18 @@
-loadrt [KINS]KINEMATICS
-# Laad de Hostmot2 en Ethernet driver
+# Laad de kinematica-module (trivkins)
+loadrt trivkins
+
+# Laad de Mesa-driver
 loadrt hostmot2
-loadrt hm2_eth board_ip=192.168.1.121 config="sserial_port_0=2"
+loadrt hm2_eth board_ip=192.168.1.121 config="num_encoders=0 num_pwmgens=0 num_stepgens=0"
 
-# Laadt de motion controller (motmod) en stelt de servo-thread in op 1 kHz (1000 µs).
-# Dit bepaalt hoe vaak de motion control berekeningen worden uitgevoerd.
-loadrt motmod
+# Laad de motion controller met correcte instellingen
+loadrt motmod base_period_nsec=100000 servo_period_nsec=1000000
 
-# Voeg de servo-thread toe
+# Voeg de servo-thread toe met de juiste functies
 addf hm2_7i94.0.read servo-thread
+addf motion-command-handler servo-thread
+addf motion-controller servo-thread
 addf hm2_7i94.0.write servo-thread
 
-# Configuratie van de 7i77 analoge uitgangen
-setp hm2_7i94.0.sserial.0.1.analogout0-scalemax 10
-setp hm2_7i94.0.sserial.0.1.analogout1-scalemax 10
-setp hm2_7i94.0.sserial.0.1.analogout2-scalemax 10
-
-# Instellen van de encoders voor closed-loop besturing
-setp hm2_7i94.0.sserial.0.1.encoder.00.scale 1000
-setp hm2_7i94.0.sserial.0.1.encoder.01.scale 1000
-setp hm2_7i94.0.sserial.0.1.encoder.02.scale 1000
-
-# Laad de PID-regelaars voor X, Y en Z
-loadrt pid names=pid.x,pid.y,pid.z
-addf pid.x servo-thread
-addf pid.y servo-thread
-addf pid.z servo-thread
-
-# Koppel de encoders aan de PID-regelaars
-net x-pos-fb hm2_7i94.0.sserial.0.1.encoder.00.position => pid.x.feedback
-net y-pos-fb hm2_7i94.0.sserial.0.1.encoder.01.position => pid.y.feedback
-net z-pos-fb hm2_7i94.0.sserial.0.1.encoder.02.position => pid.z.feedback
-
-# Servo-enable relais koppelen
-net x-enable hm2_7i94.0.sserial.0.1.dout-00 => pid.x.enable
-net y-enable hm2_7i94.0.sserial.0.1.dout-01 => pid.y.enable
-net z-enable hm2_7i94.0.sserial.0.1.dout-02 => pid.z.enable
-
-# Koppel de PID-uitgangen aan de 7i77 analoge uitgangen
-net x-output pid.x.output => hm2_7i94.0.sserial.0.1.analogout0
-net y-output pid.y.output => hm2_7i94.0.sserial.0.1.analogout1
-net z-output pid.z.output => hm2_7i94.0.sserial.0.1.analogout2
-
+# Start de HAL functies
+start
