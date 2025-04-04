@@ -3,7 +3,7 @@ loadrt trivkins
 
 # Laad de Mesa-driver
 loadrt hostmot2
-loadrt hm2_eth board_ip=192.168.1.121 config="num_encoders=0 num_pwmgens=0 num_stepgens=0"
+loadrt hm2_eth board_ip=192.168.1.121 config="sserial_port_0=300xxx"
 
 # Laad de motion controller met correcte instellingen
 loadrt motmod base_period_nsec=100000 servo_period_nsec=1000000
@@ -13,6 +13,12 @@ addf hm2_7i94.0.read servo-thread
 addf motion-command-handler servo-thread
 addf motion-controller servo-thread
 addf hm2_7i94.0.write servo-thread
+
+# Koppel encoder.00 aan de Z-as (axis.2)
+setp hm2_7i94.0.encoder.00.index-enable true
+setp hm2_7i94.0.encoder.00.scale 1000
+net z-pos-fb <= hm2_7i94.0.encoder.00.position
+net z-pos-fb => joint.2.motor-pos-fb
 
 # Start de HAL functies
 start
