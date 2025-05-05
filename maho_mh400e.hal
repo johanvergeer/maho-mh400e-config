@@ -32,6 +32,11 @@ setp hm2_7i94.0.encoder.02.scale 1000
 net z-pos-fb <= hm2_7i94.0.encoder.02.position
 net z-pos-fb => joint.2.motor-pos-fb
 
+# Create a signal with a human-readable name for relay 19K1 (CNC ready signal output)
+net cnc-ready hm2_7i94.0.7i84.0.3.output-00
+
+# Set the cnc-ready signal to TRUE unconditionally (Maho expects this from the CNC control)
+sets cnc-ready true
 # Start de HAL functies
 start
  
