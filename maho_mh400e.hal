@@ -1,32 +1,36 @@
-# Laad de kinematica-module (trivkins)
+# Load the kinematics module (trivkins = trivial kinematics, used for simple 3-axis machines)
 loadrt trivkins
 
-# Laad de Mesa-driver
+# Load the Mesa hostmot2 driver framework
 loadrt hostmot2
+
+# Load the Ethernet-based Mesa card (7i94), configure encoders and Smart Serial
 loadrt hm2_eth board_ip=192.168.1.121 config="num_encoders=3 sserial_port_0=300011"
 
-# Laad de motion controller met correcte instellingen
+# Load the motion controller with the correct timing configuration
+# base_period = stepgen timing; servo_period = PID/control loop timing
 loadrt motmod base_period_nsec=100000 servo_period_nsec=1000000
 
-# Voeg de servo-thread toe met de juiste functies
-addf hm2_7i94.0.read servo-thread
-addf motion-command-handler servo-thread
-addf motion-controller servo-thread
-addf hm2_7i94.0.write servo-thread
+# Add required functions to the servo thread in correct execution order
+addf hm2_7i94.0.read servo-thread                       # Read hardware inputs (encoders, smart-serial, etc.)
+addf motion-command-handler servo-thread                # Handle interpreter commands (e.g. G-code moves)
+addf motion-controller servo-thread                     # PID control and trajectory generation
+addf hm2_7i94.0.write servo-thread                      # Write outputs to hardware (DACs, stepgens, GPIO, etc.)
 
-# Koppel encoder.00 aan de X-as (joint.0)
+# Connect encoder.00 to X-axis (joint 0)
+# Negative scale reverses the encoder direction
 setp hm2_7i94.0.encoder.00.index-enable true
 setp hm2_7i94.0.encoder.00.scale -1000
 net x-pos-fb <= hm2_7i94.0.encoder.00.position
 net x-pos-fb => joint.0.motor-pos-fb
 
-# Koppel encoder.01 aan de Y-as (joint.1)
+# Connect encoder.01 to Y-axis (joint 1)
 setp hm2_7i94.0.encoder.01.index-enable true
 setp hm2_7i94.0.encoder.01.scale -1000
 net y-pos-fb <= hm2_7i94.0.encoder.01.position
 net y-pos-fb => joint.1.motor-pos-fb
 
-# Koppel encoder.02 aan de Z-as (joint.2)
+# Connect encoder.02 to Z-axis (joint 2)
 setp hm2_7i94.0.encoder.02.index-enable true
 setp hm2_7i94.0.encoder.02.scale 1000
 net z-pos-fb <= hm2_7i94.0.encoder.02.position
@@ -37,6 +41,6 @@ net cnc-ready hm2_7i94.0.7i84.0.3.output-00
 
 # Set the cnc-ready signal to TRUE unconditionally (Maho expects this from the CNC control)
 sets cnc-ready true
-# Start de HAL functies
+
+# Start all HAL functions and threads
 start
- 
