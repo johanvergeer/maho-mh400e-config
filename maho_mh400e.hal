@@ -42,8 +42,11 @@ net cnc-ready hm2_7i94.0.7i84.0.3.output-00
 # Set the cnc-ready signal to TRUE unconditionally (Maho expects this from the CNC control)
 sets cnc-ready true
 
-# estop loopback
-net estop-loop iocontrol.0.user-enable-out iocontrol.0.emc-enable-in
+# Estop loopback
+# The estop loop is closed (enabled) when the +24V control circuit is active.
+# This circuit is energized when the physical estop is pulled out and the "ON" button is pressed.
+# The GUI estop button is intentionally ignored for safety reasons.
+net estop-loop hm2_7i94.0.7i84.0.3.input-03 => iocontrol.0.emc-enable-in
 
 # Start all HAL functions and threads
 start
