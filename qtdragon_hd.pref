@@ -1,6 +1,6 @@
 [DIALOG_GEOMETRY]
 AboutDialog-geometry = half
-LncMessage-geometry = default
+LncMessage-geometry = 910 539 280 118
 ToolChangeDialog-geometry = default
 basicProbeHelpDialog-geometry = default
 
@@ -20,7 +20,7 @@ RunFromLineDialog_play_sound = True
 RunFromLineDialog_sound_type = READY
 
 [BOOK_KEEPING]
-last_loaded_directory = /home/johan/linuxcnc/nc_files/examples
+last_loaded_directory = 
 last_loaded_file = None
 style_QSS_Path = DEFAULT
 
