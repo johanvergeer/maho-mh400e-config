@@ -1,3 +1,6 @@
 *.var
 *.var.bak
 qtvcp
+autosave.halscope
+debugging.md
+*.log
