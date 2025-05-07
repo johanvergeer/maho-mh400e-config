@@ -42,5 +42,8 @@ net cnc-ready hm2_7i94.0.7i84.0.3.output-00
 # Set the cnc-ready signal to TRUE unconditionally (Maho expects this from the CNC control)
 sets cnc-ready true
 
+# estop loopback
+net estop-loop iocontrol.0.user-enable-out iocontrol.0.emc-enable-in
+
 # Start all HAL functions and threads
 start
