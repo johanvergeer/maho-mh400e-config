@@ -35,7 +35,7 @@ class LubePumpController:
         self.pressure_timeout = int(self.inifile.find(inifile_section, "PRESSURE_TIMEOUT"))
         self.pressure_hold_time = int(self.inifile.find(inifile_section, "PRESSURE_HOLD_TIME"))
 
-        self.last_pump_time = time.time()
+        self.last_pump_time = time.time() - self.pump_interval
         self.error_state = False
 
         self.pump_running = False
