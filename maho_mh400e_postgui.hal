@@ -1,0 +1,9 @@
+loadusr -W ./lube_pump.py
+
+# motion.motion-enabled is set to `true` by turning the machine on
+# in the LinuxCNC GUI
+net motion-enabled => lube_pump.machine_on <= motion.motion-enabled
+# hm2_7i94.0.7i84.0.3.input-07 reads the lubrication oil pressure via the 7i84 input 7
+net pressure-ok => lube_pump.pressure_ok <= hm2_7i94.0.7i84.0.3.input-07
+net pump-enable => lube_pump.pump_active => hm2_7i94.0.7i84.0.3.output-01
+net lube-error => lube_pump.error_active
