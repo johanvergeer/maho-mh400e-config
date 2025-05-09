@@ -4,6 +4,7 @@ import hal
 import time
 import linuxcnc
 import qtvcp.logger
+import os
 
 _logger = qtvcp.logger.getLogger("LUBRICATION")
 
@@ -18,7 +19,16 @@ class LubePumpController:
 
         self.halcomp.ready()
 
-        self.pump_interval = 16 * 60  # seconds
+
+        self.stat = linuxcnc.stat()
+        self.command = linuxcnc.command()
+        self.inifile = linuxcnc.ini(self._get_inifile_path())
+
+        inifile_section = "LUBRICATION"
+        self.pump_interval = int(self.inifile.find(inifile_section, "PUMP_INTERVAL_1"))
+        self.pressure_timeout = int(self.inifile.find(inifile_section, "PRESSURE_TIMEOUT"))
+        self.pressure_hold_time = int(self.inifile.find(inifile_section, "PRESSURE_HOLD_TIME"))
+
         self.last_pump_time = time.time()
         self.error_state = False
 
@@ -28,8 +38,11 @@ class LubePumpController:
         self.waiting_for_pressure = False
         self.pressure_hold_phase = False
 
-        self.stat = linuxcnc.stat()
-        self.command = linuxcnc.command()
+    def _get_inifile_path(self) -> str:
+        inifile_path = os.environ.get("INI_FILE_NAME")
+        if not inifile_path:
+            raise RuntimeError("INI_FILE_NAME environment variable not set")
+        return inifile_path
 
     def send_qtdragon_error(self, message: str) -> None:
         """Send error message to QtDragon HD"""
@@ -74,9 +87,9 @@ class LubePumpController:
                 self.waiting_for_pressure = False
                 self.pressure_hold_phase = True
                 _logger.info("Lubrication pressure reached, starting hold phase")
-            elif (now - self.pump_start_time) > 60:
-                _logger.error("Lubrication pressure not reached within 60 seconds")
-                self.send_qtdragon_error("Lubrication pressure not reached within 60 seconds!")
+            elif (now - self.pump_start_time) > self.pressure_timeout:
+                _logger.error(f"Lubrication pressure not reached within {self.pressure_timeout} seconds")
+                self.send_qtdragon_error(f"Lubrication pressure not reached within {self.pressure_timeout} seconds!")
                 self.halcomp["error_active"] = True
                 self.halcomp["pump_active"] = False
                 self.pump_running = False
@@ -84,8 +97,7 @@ class LubePumpController:
                 self.error_state = True
                 return
 
-        # Hold pressure for 15 seconds
-        if self.pressure_hold_phase and (now - self.pressure_detected_time) >= 15:
+        if self.pressure_hold_phase and (now - self.pressure_detected_time) >= self.pressure_hold_time:
             _logger.info("Lubrication cycle complete")
             self.halcomp["pump_active"] = False
             self.pump_running = False
