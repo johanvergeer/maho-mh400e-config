@@ -5,6 +5,7 @@ import time
 import linuxcnc
 import qtvcp.logger
 import os
+from distutils.util import strtobool
 
 _logger = qtvcp.logger.getLogger("LUBRICATION")
 
@@ -25,6 +26,10 @@ class LubePumpController:
         self.inifile = linuxcnc.ini(self._get_inifile_path())
 
         inifile_section = "LUBRICATION"
+        self.enabled = bool(strtobool(self.inifile.find("LUBRICATION", "ENABLED") or "false"))
+        if not self.enabled:
+            _logger.warning("Lubrication logic is disabled via INI file")
+            self.command.text_msg("Lubrication logic is disabled via INI file")
         self.pump_interval = int(self.inifile.find(inifile_section, "PUMP_INTERVAL_1"))
         self.pressure_timeout = int(self.inifile.find(inifile_section, "PRESSURE_TIMEOUT"))
         self.pressure_hold_time = int(self.inifile.find(inifile_section, "PRESSURE_HOLD_TIME"))
@@ -49,6 +54,9 @@ class LubePumpController:
         self.command.error_msg(message)
 
     def update(self) -> None:
+        if not self.enabled:
+            return
+
         self.stat.poll()
         now = time.time()
 
