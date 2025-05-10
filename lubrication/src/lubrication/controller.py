@@ -95,6 +95,8 @@ class LubePumpController:
         self.state = LubricationState()
         self.timer = timer
 
+        self._was_machine_on = False
+
         if not self.ini.is_lubrication_enabled:
             self.logger.warning("Lubrication logic is disabled via INI file")
             self.command.text_msg("Lubrication logic is disabled via INI file")
@@ -111,6 +113,7 @@ class LubePumpController:
             self.hal.deactivate_error()
             self.state.reset()
             self.timer.reset(now)
+            self._was_machine_on = False
             return
 
         if self.state.error_active:
@@ -122,11 +125,12 @@ class LubePumpController:
             else:
                 return
 
-        if self.timer.should_lubricate(now):
+        if self.timer.should_lubricate(now) or not self._was_machine_on:
             self.logger.info("Starting lubrication pump")
             self.hal.activate_pump()
             self.state.start_cycle(now)
             self.timer.reset(now)
+            self._was_machine_on = True
 
         if self.state.pump_running and self.state.waiting_for_pressure:
             if self.hal.is_pressure_ok:
