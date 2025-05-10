@@ -164,3 +164,78 @@ def test_pump_continues_running_if_holdtime_not_elapsed_yet():
     # Assert
     hal.deactivate_pump.assert_not_called()
     assert call("Lubrication cycle complete") not in logger.info.call_args_list
+
+
+def test_pump_enters_error_state_if_pressure_not_reached_in_time():
+    # Arrange
+    hal = create_autospec(HalInterface, spec_set=True)
+    command = create_autospec(CommandInterface, spec_set=True)
+    logger = create_autospec(Logger, spec_set=True)
+
+    hal.is_machine_on = True
+    hal.is_pressure_ok = False  # geen druk bereikt
+
+    ini = make_ini()
+
+    timer = create_autospec(LubricationTimer, spec_set=True)
+    timer.should_lubricate.return_value = False
+
+    controller = make_controller(
+        hal=hal,
+        command=command,
+        logger=logger,
+        ini=ini,
+        timer=timer,
+    )
+
+    # Start cyclus op t=12:00:00 zonder drukopbouw
+    with freeze_time("2024-01-01 12:00:00"):
+        controller.state.start_cycle(time.time())
+
+    # Na 61s moet een fout optreden
+    with freeze_time("2024-01-01 12:01:01"):
+        controller.update()
+
+    # Assert
+    hal.deactivate_pump.assert_called_once()
+    hal.activate_error.assert_called_once()
+    command.error_msg.assert_called_once_with("Lubrication pressure not reached within 60 seconds!")
+    logger.error.assert_called_once_with("Lubrication pressure not reached within 60 seconds")
+
+
+def test_pump_does_not_enter_error_state_before_pressure_timeout():
+    # Arrange
+    hal = create_autospec(HalInterface, spec_set=True)
+    command = create_autospec(CommandInterface, spec_set=True)
+    logger = create_autospec(Logger, spec_set=True)
+
+    hal.is_machine_on = True
+    hal.is_pressure_ok = False  # nog steeds geen druk
+
+    ini = make_ini()
+    ini.pressure_timeout = 60
+
+    timer = create_autospec(LubricationTimer, spec_set=True)
+    timer.should_lubricate.return_value = False
+
+    controller = make_controller(
+        hal=hal,
+        command=command,
+        logger=logger,
+        ini=ini,
+        timer=timer,
+    )
+
+    # Start cyclus op t=12:00:00
+    with freeze_time("2024-01-01 12:00:00"):
+        controller.state.start_cycle(time.time())
+
+    # Net voor timeout: t=12:00:59
+    with freeze_time("2024-01-01 12:00:59"):
+        controller.update()
+
+    # Assert
+    hal.deactivate_pump.assert_not_called()
+    hal.activate_error.assert_not_called()
+    command.error_msg.assert_not_called()
+    assert all("pressure not reached" not in call.args[0] for call in logger.error.call_args_list)
