@@ -164,7 +164,7 @@ class LubePumpController:
     def __init__(self,
                  hal_adapter: HalAdapter, stat_adapter: StatAdapter,
                  command_adapter: CommandAdapter, ini_adapter: IniAdapter,
-                 logger: Logger
+                 logger: Logger, timer: LubricationTimer
                  ) -> None:
         self.logger = logger
         self.logger.info("Initializing lubrication")
@@ -173,7 +173,7 @@ class LubePumpController:
         self.command = command_adapter
         self.ini = ini_adapter
         self.state = LubricationState()
-        self.timer = LubricationTimer(interval_seconds=self.ini.pump_interval)
+        self.timer = timer
 
         if not self.ini.is_lubrication_enabled:
             self.logger.warning("Lubrication logic is disabled via INI file")
@@ -231,12 +231,14 @@ class LubePumpController:
 
 
 def main() -> None:
+    ini = IniAdapter()
     controller = LubePumpController(
         HalAdapter(),
         StatAdapter(),
         CommandAdapter(),
-        IniAdapter(),
-        qtvcp.logger.getLogger("LUBRICATION")
+        ini,
+        qtvcp.logger.getLogger("LUBRICATION"),
+        LubricationTimer(interval_seconds=ini.pump_interval)
     )
     try:
         while True:
