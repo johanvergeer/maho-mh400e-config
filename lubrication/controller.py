@@ -16,7 +16,6 @@ class HalAdapter:
         self.halcomp.newpin("pressure_ok", hal.HAL_BIT, hal.HAL_IN)
         self.halcomp.newpin("pump_active", hal.HAL_BIT, hal.HAL_OUT)
         self.halcomp.newpin("error_active", hal.HAL_BIT, hal.HAL_OUT)
-
         self.halcomp.ready()
 
     @property
@@ -24,28 +23,20 @@ class HalAdapter:
         return self.halcomp["machine_on"]
 
     @property
-    def is_pump_active(self) -> bool:
-        return self.halcomp["pump_active"]
-
-    @is_pump_active.setter
-    def is_pump_active(self, value: bool) -> None:
-        self.halcomp["pump_active"] = value
-
-    @property
-    def is_error_active(self) -> bool:
-        return self.halcomp["error_active"]
-
-    @is_error_active.setter
-    def is_error_active(self, value: bool) -> None:
-        self.halcomp["error_active"] = value
-
-    @property
     def is_pressure_ok(self) -> bool:
         return self.halcomp["pressure_ok"]
 
-    @is_pressure_ok.setter
-    def is_pressure_ok(self, value: bool) -> None:
-        self.halcomp["pressure_ok"] = value
+    def activate_pump(self) -> None:
+        self.halcomp["pump_active"] = True
+
+    def deactivate_pump(self) -> None:
+        self.halcomp["pump_active"] = False
+
+    def activate_error(self) -> None:
+        self.halcomp["error_active"] = True
+
+    def deactivate_error(self) -> None:
+        self.halcomp["error_active"] = False
 
 
 class StatAdapter:
@@ -198,8 +189,8 @@ class LubePumpController:
         now = time.time()
 
         if not self.hal.is_machine_on:
-            self.hal.is_pump_active = False
-            self.hal.is_error_active = False
+            self.hal.deactivate_pump()
+            self.hal.deactivate_error()
             self.state.reset()
             self.timer.reset(now)
             return
@@ -207,7 +198,7 @@ class LubePumpController:
         if self.state.error_active:
             if self.hal.is_pressure_ok:
                 self.logger.info("Pressure restored, clearing lubrication error")
-                self.hal.is_error_active = False
+                self.hal.deactivate_error()
                 self.state.reset()
                 self.timer.reset(now)
             else:
@@ -215,7 +206,7 @@ class LubePumpController:
 
         if self.timer.should_lubricate(now):
             self.logger.info("Starting lubrication pump")
-            self.hal.is_pump_active = True
+            self.hal.activate_pump()
             self.state.start_cycle(now)
             self.timer.reset(now)
 
@@ -230,14 +221,14 @@ class LubePumpController:
                 self.command.error_msg(
                     f"Lubrication pressure not reached within {self.ini.pressure_timeout} seconds!"
                 )
-                self.hal.is_error_active = True
-                self.hal.is_pump_active = False
+                self.hal.activate_error()
+                self.hal.deactivate_pump()
                 self.state.enter_error_state()
                 return
 
         if self.state.cycle_complete(now, self.ini.pressure_hold_time):
             self.logger.info("Lubrication cycle complete")
-            self.hal.is_pump_active = False
+            self.hal.deactivate_pump()
             self.state.complete_cycle()
             self.timer.reset(now)
 
@@ -257,7 +248,7 @@ def main() -> None:
             controller.update()
             time.sleep(0.1)
     except KeyboardInterrupt:
-        controller.hal.is_pump_active = False
+        controller.hal.deactivate_pump()
         raise SystemExit
 
 
