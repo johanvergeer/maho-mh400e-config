@@ -1,8 +1,9 @@
 import os
-from distutils.util import strtobool
 
 import hal
 import linuxcnc
+
+from lubrication.utils import strtobool
 
 
 class HalAdapter:
