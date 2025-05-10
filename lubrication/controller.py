@@ -100,6 +100,13 @@ class Logger(Protocol):
 
 class LubricationState:
     def __init__(self, now: float):
+        self.last_pump_time = now
+        self.pump_running = False
+        self.pump_start_time = None
+        self.pressure_detected_time = None
+        self.waiting_for_pressure = False
+        self.pressure_hold_phase = False
+        self.error_active = False
         self.reset(now)
 
     def reset(self, now: float):
@@ -119,6 +126,31 @@ class LubricationState:
 
     def cycle_complete(self, now: float, hold_time: float) -> bool:
         return self.pressure_hold_phase and (now - self.pressure_detected_time) >= hold_time
+
+    def reset_on_machine_off(self, now: float):
+        self.reset(now)
+
+    def enter_error_state(self):
+        self.pump_running = False
+        self.waiting_for_pressure = False
+        self.error_active = True
+
+    def start_cycle(self, now: float):
+        self.pump_start_time = now
+        self.pump_running = True
+        self.waiting_for_pressure = True
+        self.pressure_detected_time = None
+        self.pressure_hold_phase = False
+
+    def pressure_reached(self, now: float):
+        self.pressure_detected_time = now
+        self.waiting_for_pressure = False
+        self.pressure_hold_phase = True
+
+    def complete_cycle(self, now: float):
+        self.pump_running = False
+        self.pressure_hold_phase = False
+        self.last_pump_time = now
 
 
 class LubePumpController:
@@ -159,42 +191,31 @@ class LubePumpController:
             if self.hal.is_pressure_ok:
                 self.logger.info("Pressure restored, clearing lubrication error")
                 self.hal.is_error_active = False
-                self.state.error_active = False
-                self.state.last_pump_time = now
+                self.state.reset(now)
             else:
                 return
 
         if self.state.should_start_pump(now, self.ini.pump_interval):
             self.logger.info("Starting lubrication pump")
             self.hal.is_pump_active = True
-            self.state.pump_start_time = now
-            self.state.pump_running = True
-            self.state.waiting_for_pressure = True
-            self.state.pressure_detected_time = None
-            self.state.pressure_hold_phase = False
+            self.state.start_cycle(now)
 
         if self.state.pump_running and self.state.waiting_for_pressure:
             if self.hal.is_pressure_ok:
-                self.state.pressure_detected_time = now
-                self.state.waiting_for_pressure = False
-                self.state.pressure_hold_phase = True
+                self.state.pressure_reached(now)
                 self.logger.info("Lubrication pressure reached, starting hold phase")
             elif self.state.should_abort_due_to_timeout(now, self.ini.pressure_timeout):
                 self.logger.error(f"Lubrication pressure not reached within {self.ini.pressure_timeout} seconds")
                 self.send_qtdragon_error(f"Lubrication pressure not reached within {self.ini.pressure_timeout} seconds!")
                 self.hal.is_error_active = True
                 self.hal.is_pump_active = False
-                self.state.pump_running = False
-                self.state.waiting_for_pressure = False
-                self.state.error_active = True
+                self.state.enter_error_state()
                 return
 
         if self.state.cycle_complete(now, self.ini.pressure_hold_time):
             self.logger.info("Lubrication cycle complete")
             self.hal.is_pump_active = False
-            self.state.pump_running = False
-            self.state.pressure_hold_phase = False
-            self.state.last_pump_time = now
+            self.state.complete_cycle(now)
 
 
 def main() -> None:
