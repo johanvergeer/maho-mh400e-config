@@ -1,20 +1,18 @@
 [project]
-name = "maho-mh400e-config"
+name = "lubrication"
 version = "0.1.0"
 description = ""
 authors = [
     {name = "Johan Vergeer",email = "johanvergeer@gmail.com"}
 ]
-readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-    "hal (>=0.0.3,<0.0.4)"
-]
+dependencies = []
 
 [tool.poetry]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
+ruff = "^0.11.9"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
