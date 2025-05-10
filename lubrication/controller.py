@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
+import os
+import time
+from distutils.util import strtobool
 from typing import Protocol
 
 import hal
-import time
 import linuxcnc
 import qtvcp.logger
-import os
-from distutils.util import strtobool
+
 
 class HalAdapter:
     def __init__(self) -> None:
@@ -54,6 +55,7 @@ class StatAdapter:
     def poll(self) -> None:
         self.stat.poll()
 
+
 class CommandAdapter:
     def __init__(self) -> None:
         self.command = linuxcnc.command()
@@ -63,6 +65,7 @@ class CommandAdapter:
 
     def error_msg(self, message: str) -> None:
         self.command.error_msg(message)
+
 
 class IniAdapter:
     def __init__(self) -> None:
@@ -88,7 +91,7 @@ class IniAdapter:
         return int(self.inifile.find(self._inifile_section, "PRESSURE_TIMEOUT"))
 
     @property
-    def pressure_hold_time(self):
+    def pressure_hold_time(self) -> int:
         return int(self.inifile.find(self._inifile_section, "PRESSURE_HOLD_TIME"))
 
 
@@ -103,7 +106,7 @@ class LubricationTimer:
         self.interval = interval_seconds
         self._last_reset = now if now is not None else time.time()
 
-    def reset(self, now: float = None):
+    def reset(self, now: float = None) -> None:
         self._last_reset = now if now is not None else time.time()
 
     def should_lubricate(self, now: float = None) -> bool:
@@ -124,7 +127,7 @@ class LubricationState:
         self.pressure_hold_phase = False
         self.error_active = False
 
-    def reset(self):
+    def reset(self) -> None:
         self.pump_running = False
         self.pump_start_time = None
         self.pressure_detected_time = None
@@ -133,39 +136,47 @@ class LubricationState:
         self.error_active = False
 
     def should_abort_due_to_timeout(self, now: float, timeout: float) -> bool:
-        return self.pump_running and self.waiting_for_pressure and (now - self.pump_start_time) > timeout
+        return (
+            self.pump_running
+            and self.waiting_for_pressure
+            and (now - self.pump_start_time) > timeout
+        )
 
     def cycle_complete(self, now: float, hold_time: float) -> bool:
         return self.pressure_hold_phase and (now - self.pressure_detected_time) >= hold_time
 
-    def enter_error_state(self):
+    def enter_error_state(self) -> None:
         self.pump_running = False
         self.waiting_for_pressure = False
         self.error_active = True
 
-    def start_cycle(self, now: float):
+    def start_cycle(self, now: float) -> None:
         self.pump_start_time = now
         self.pump_running = True
         self.waiting_for_pressure = True
         self.pressure_detected_time = None
         self.pressure_hold_phase = False
 
-    def pressure_reached(self, now: float):
+    def pressure_reached(self, now: float) -> None:
         self.pressure_detected_time = now
         self.waiting_for_pressure = False
         self.pressure_hold_phase = True
 
-    def complete_cycle(self):
+    def complete_cycle(self) -> None:
         self.pump_running = False
         self.pressure_hold_phase = False
 
 
 class LubePumpController:
-    def __init__(self,
-                 hal_adapter: HalAdapter, stat_adapter: StatAdapter,
-                 command_adapter: CommandAdapter, ini_adapter: IniAdapter,
-                 logger: Logger, timer: LubricationTimer
-                 ) -> None:
+    def __init__(
+        self,
+        hal_adapter: HalAdapter,
+        stat_adapter: StatAdapter,
+        command_adapter: CommandAdapter,
+        ini_adapter: IniAdapter,
+        logger: Logger,
+        timer: LubricationTimer,
+    ) -> None:
         self.logger = logger
         self.logger.info("Initializing lubrication")
         self.hal = hal_adapter
@@ -178,9 +189,6 @@ class LubePumpController:
         if not self.ini.is_lubrication_enabled:
             self.logger.warning("Lubrication logic is disabled via INI file")
             self.command.text_msg("Lubrication logic is disabled via INI file")
-
-    def send_qtdragon_error(self, message: str) -> None:
-        self.command.error_msg(message)
 
     def update(self) -> None:
         if not self.ini.is_lubrication_enabled:
@@ -216,8 +224,12 @@ class LubePumpController:
                 self.state.pressure_reached(now)
                 self.logger.info("Lubrication pressure reached, starting hold phase")
             elif self.state.should_abort_due_to_timeout(now, self.ini.pressure_timeout):
-                self.logger.error(f"Lubrication pressure not reached within {self.ini.pressure_timeout} seconds")
-                self.send_qtdragon_error(f"Lubrication pressure not reached within {self.ini.pressure_timeout} seconds!")
+                self.logger.error(
+                    f"Lubrication pressure not reached within {self.ini.pressure_timeout} seconds"
+                )
+                self.command.error_msg(
+                    f"Lubrication pressure not reached within {self.ini.pressure_timeout} seconds!"
+                )
                 self.hal.is_error_active = True
                 self.hal.is_pump_active = False
                 self.state.enter_error_state()
@@ -238,7 +250,7 @@ def main() -> None:
         CommandAdapter(),
         ini,
         qtvcp.logger.getLogger("LUBRICATION"),
-        LubricationTimer(interval_seconds=ini.pump_interval)
+        LubricationTimer(interval_seconds=ini.pump_interval),
     )
     try:
         while True:
@@ -247,6 +259,7 @@ def main() -> None:
     except KeyboardInterrupt:
         controller.hal.is_pump_active = False
         raise SystemExit
+
 
 if __name__ == "__main__":
     main()

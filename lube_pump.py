@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-import hal
-import time
-import linuxcnc
-import qtvcp.logger
 import os
+import time
 from distutils.util import strtobool
 
+import hal
+import linuxcnc
+import qtvcp.logger
+
 _logger = qtvcp.logger.getLogger("LUBRICATION")
+
 
 class LubePumpController:
     def __init__(self) -> None:
@@ -19,7 +21,6 @@ class LubePumpController:
         self.halcomp.newpin("error_active", hal.HAL_BIT, hal.HAL_OUT)
 
         self.halcomp.ready()
-
 
         self.stat = linuxcnc.stat()
         self.command = linuxcnc.command()
@@ -96,8 +97,12 @@ class LubePumpController:
                 self.pressure_hold_phase = True
                 _logger.info("Lubrication pressure reached, starting hold phase")
             elif (now - self.pump_start_time) > self.pressure_timeout:
-                _logger.error(f"Lubrication pressure not reached within {self.pressure_timeout} seconds")
-                self.send_qtdragon_error(f"Lubrication pressure not reached within {self.pressure_timeout} seconds!")
+                _logger.error(
+                    f"Lubrication pressure not reached within {self.pressure_timeout} seconds"
+                )
+                self.send_qtdragon_error(
+                    f"Lubrication pressure not reached within {self.pressure_timeout} seconds!"
+                )
                 self.halcomp["error_active"] = True
                 self.halcomp["pump_active"] = False
                 self.pump_running = False
@@ -105,12 +110,16 @@ class LubePumpController:
                 self.error_state = True
                 return
 
-        if self.pressure_hold_phase and (now - self.pressure_detected_time) >= self.pressure_hold_time:
+        if (
+            self.pressure_hold_phase
+            and (now - self.pressure_detected_time) >= self.pressure_hold_time
+        ):
             _logger.info("Lubrication cycle complete")
             self.halcomp["pump_active"] = False
             self.pump_running = False
             self.pressure_hold_phase = False
             self.last_pump_time = now
+
 
 def main() -> None:
     controller = LubePumpController()
@@ -121,6 +130,7 @@ def main() -> None:
     except KeyboardInterrupt:
         controller.halcomp["pump_active"] = False
         raise SystemExit
+
 
 if __name__ == "__main__":
     main()
