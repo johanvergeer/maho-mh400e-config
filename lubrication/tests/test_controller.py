@@ -14,28 +14,54 @@ from lubrication.adapters.interfaces import (
 from lubrication.controller import LubePumpController, LubricationTimer
 
 
-def test_controller_skips_lubrication_when_disabled():
-    # Arrange
-    hal = create_autospec(HalInterface)
-    stat = create_autospec(StatInterface)
-    command = create_autospec(CommandInterface)
-    logger = create_autospec(Logger)
-
+def make_ini(lubrication_enabled: bool = True) -> IniInterface:
     ini = MagicMock(spec=IniInterface)
-    ini.is_lubrication_enabled = False
+
+    ini.is_lubrication_enabled = lubrication_enabled
     ini.pump_interval = 480
     ini.pressure_timeout = 60
     ini.pressure_hold_time = 15
 
+    return ini
+
+
+def make_timer(ini: IniInterface | None = None) -> LubricationTimer:
+    ini = ini or make_ini()
     timer = LubricationTimer(interval_seconds=ini.pump_interval)
 
-    controller = LubePumpController(
-        hal_adapter=hal,
-        stat_adapter=stat,
-        command_adapter=command,
-        ini_adapter=ini,
-        logger=logger,
-        timer=timer,
+    return timer
+
+
+def make_controller(
+    *,
+    hal: HalInterface = None,
+    stat: StatInterface = None,
+    command: CommandInterface = None,
+    ini: IniInterface = None,
+    logger: Logger = None,
+    timer: LubricationTimer = None,
+    was_machine_on: bool = True,
+) -> LubePumpController:
+    hal = hal or create_autospec(HalInterface, spec_set=True)
+    stat = stat or create_autospec(StatInterface, spec_set=True)
+    command = command or create_autospec(CommandInterface, spec_set=True)
+    logger = logger or create_autospec(Logger, spec_set=True)
+    timer = timer or make_timer()
+    ini = ini or make_ini()
+
+    controller = LubePumpController(hal, stat, command, ini, logger, timer)
+    controller._was_machine_on = was_machine_on
+
+    return controller
+
+
+def test_controller_skips_lubrication_when_disabled():
+    # Arrange
+    hal = create_autospec(HalInterface, spec_set=True)
+    logger = create_autospec(Logger, spec_set=True)
+    command = create_autospec(CommandInterface, spec_set=True)
+    controller = make_controller(
+        hal=hal, command=command, ini=make_ini(lubrication_enabled=False), logger=logger
     )
 
     # Act
@@ -52,31 +78,28 @@ def test_controller_skips_lubrication_when_disabled():
 @pytest.mark.parametrize("should_lubricate", [True, False])
 def test_pump_starts_when_machine_turns_on_even_if_timer_does_not_trigger(should_lubricate) -> None:
     # Arrange
-    hal = create_autospec(HalInterface)
-    stat = create_autospec(StatInterface)
-    command = create_autospec(CommandInterface)
-    logger = create_autospec(Logger)
+    hal = create_autospec(HalInterface, spec_set=True)
+    stat = create_autospec(StatInterface, spec_set=True)
+    command = create_autospec(CommandInterface, spec_set=True)
+    logger = create_autospec(Logger, spec_set=True)
 
     hal.is_machine_on = True
     hal.is_pressure_ok = False
 
-    ini = MagicMock(spec=IniInterface)
-    ini.is_lubrication_enabled = True
-    ini.pump_interval = 480
-    ini.pressure_timeout = 60
-    ini.pressure_hold_time = 15
+    ini = make_ini()
 
     # Timer geeft expliciet False terug, maar dat moet geen invloed hebben
     timer = create_autospec(LubricationTimer)
     timer.should_lubricate.return_value = should_lubricate
 
-    controller = LubePumpController(
-        hal_adapter=hal,
-        stat_adapter=stat,
-        command_adapter=command,
-        ini_adapter=ini,
+    controller = make_controller(
+        hal=hal,
+        stat=stat,
+        command=command,
+        ini=ini,
         logger=logger,
         timer=timer,
+        was_machine_on=False,
     )
 
     # Act
@@ -90,24 +113,16 @@ def test_pump_starts_when_machine_turns_on_even_if_timer_does_not_trigger(should
 
 def test_pump_stops_when_holdtime_has_elapsed():
     # Arrange
-    hal = create_autospec(HalInterface)
-    stat = create_autospec(StatInterface)
-    command = create_autospec(CommandInterface)
-    logger = create_autospec(Logger)
+    hal = create_autospec(HalInterface, spec_set=True)
+    logger = create_autospec(Logger, spec_set=True)
 
     hal.is_machine_on = True
     hal.is_pressure_ok = True
 
-    ini = MagicMock(spec=IniInterface)
-    ini.is_lubrication_enabled = True
-    ini.pump_interval = 480
-    ini.pressure_timeout = 60
-    ini.pressure_hold_time = 5
-
-    timer = create_autospec(LubricationTimer)
+    timer = create_autospec(LubricationTimer, spec_set=True)
     timer.should_lubricate.return_value = False
 
-    controller = LubePumpController(hal, stat, command, ini, logger, timer)
+    controller = make_controller(hal=hal, logger=logger, timer=timer)
     controller._was_machine_on = True
 
     # Eerst alles instellen op t=12:00:00
@@ -116,7 +131,7 @@ def test_pump_stops_when_holdtime_has_elapsed():
         controller.state.pressure_reached(time.time())
 
     # Daarna springen naar t=12:00:06 en update uitvoeren
-    with freeze_time("2024-01-01 12:00:06"):
+    with freeze_time("2024-01-01 12:00:16"):
         controller.update()
 
     # Assert
@@ -127,31 +142,23 @@ def test_pump_stops_when_holdtime_has_elapsed():
 
 def test_pump_continues_running_if_holdtime_not_elapsed_yet():
     # Arrange
-    hal = create_autospec(HalInterface)
-    stat = create_autospec(StatInterface)
-    command = create_autospec(CommandInterface)
-    logger = create_autospec(Logger)
+    hal = create_autospec(HalInterface, spec_set=True)
+    logger = create_autospec(Logger, spec_set=True)
 
     hal.is_machine_on = True
     hal.is_pressure_ok = True
 
-    ini = MagicMock(spec=IniInterface)
-    ini.is_lubrication_enabled = True
-    ini.pump_interval = 480
-    ini.pressure_timeout = 60
-    ini.pressure_hold_time = 10  # holdtime is 10s
-
-    timer = create_autospec(LubricationTimer)
+    timer = create_autospec(LubricationTimer, spec_set=True)
     timer.should_lubricate.return_value = False
 
-    controller = LubePumpController(hal, stat, command, ini, logger, timer)
+    controller = make_controller(hal=hal, logger=logger, timer=timer)
     with freeze_time("2024-01-01 12:00:00"):
         controller.state.start_cycle(time.time())  # cyclus is al gestart
         controller.state.pressure_reached(time.time())  # pas 5s sinds drukopbouw
         controller._was_machine_on = True
 
     # Act
-    with freeze_time("2024-01-01 12:00:09"):
+    with freeze_time("2024-01-01 12:00:14"):
         controller.update()
 
     # Assert
