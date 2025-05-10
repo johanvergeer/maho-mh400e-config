@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 import time
-from typing import Protocol
 
-from lubrication.adapters.linuxcnc import CommandAdapter, HalAdapter, IniAdapter, StatAdapter
-
-
-class Logger(Protocol):
-    def info(self, msg: str) -> None: ...
-    def warning(self, msg: str) -> None: ...
-    def error(self, msg: str) -> None: ...
+from lubrication.adapters.interfaces import (
+    CommandInterface,
+    HalInterface,
+    IniInterface,
+    Logger,
+    StatInterface,
+)
 
 
 class LubricationTimer:
@@ -80,10 +79,10 @@ class LubricationState:
 class LubePumpController:
     def __init__(
         self,
-        hal_adapter: HalAdapter,
-        stat_adapter: StatAdapter,
-        command_adapter: CommandAdapter,
-        ini_adapter: IniAdapter,
+        hal_adapter: HalInterface,
+        stat_adapter: StatInterface,
+        command_adapter: CommandInterface,
+        ini_adapter: IniInterface,
         logger: Logger,
         timer: LubricationTimer,
     ) -> None:

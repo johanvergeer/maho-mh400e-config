@@ -3,10 +3,16 @@ import os
 import hal
 import linuxcnc
 
+from lubrication.adapters.interfaces import (
+    CommandInterface,
+    HalInterface,
+    IniInterface,
+    StatInterface,
+)
 from lubrication.utils import strtobool
 
 
-class HalAdapter:
+class HalAdapter(HalInterface):
     def __init__(self) -> None:
         self.halcomp = hal.component("lube_pump")
         self.halcomp.newpin("machine_on", hal.HAL_BIT, hal.HAL_IN)
@@ -36,7 +42,7 @@ class HalAdapter:
         self.halcomp["error_active"] = False
 
 
-class StatAdapter:
+class StatAdapter(StatInterface):
     def __init__(self) -> None:
         self.stat = linuxcnc.stat()
 
@@ -44,7 +50,7 @@ class StatAdapter:
         self.stat.poll()
 
 
-class CommandAdapter:
+class CommandAdapter(CommandInterface):
     def __init__(self) -> None:
         self.command = linuxcnc.command()
 
@@ -55,7 +61,7 @@ class CommandAdapter:
         self.command.error_msg(message)
 
 
-class IniAdapter:
+class IniAdapter(IniInterface):
     def __init__(self) -> None:
         self.inifile = linuxcnc.ini(self._get_inifile_path())
         self._inifile_section = "LUBRICATION"
