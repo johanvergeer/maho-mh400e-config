@@ -5,3 +5,6 @@ autosave.halscope
 debugging.md
 *.log
 .idea
+**/dist
+**/__pycache__
+**/.venv
