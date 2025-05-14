@@ -19,6 +19,9 @@ class HalAdapter(HalInterface):
         self.halcomp.newpin("pressure_ok", hal.HAL_BIT, hal.HAL_IN)
         self.halcomp.newpin("pump_active", hal.HAL_BIT, hal.HAL_OUT)
         self.halcomp.newpin("error_active", hal.HAL_BIT, hal.HAL_OUT)
+        self.halcomp.newpin("x_axis_position", hal.HAL_FLOAT, hal.HAL_IN)
+        self.halcomp.newpin("y_axis_position", hal.HAL_FLOAT, hal.HAL_IN)
+        self.halcomp.newpin("z_axis_position", hal.HAL_FLOAT, hal.HAL_IN)
         self.halcomp.ready()
 
     @property
@@ -28,6 +31,18 @@ class HalAdapter(HalInterface):
     @property
     def is_pressure_ok(self) -> bool:
         return self.halcomp["pressure_ok"]
+
+    @property
+    def x_axis_position(self) -> float:
+        return self.halcomp["x_axis_position"]
+
+    @property
+    def y_axis_position(self) -> float:
+        return self.halcomp["x_axis_position"]
+
+    @property
+    def z_axis_position(self) -> float:
+        return self.halcomp["x_axis_position"]
 
     def activate_pump(self) -> None:
         self.halcomp["pump_active"] = True
@@ -72,6 +87,15 @@ class IniAdapter(IniInterface):
             raise RuntimeError("INI_FILE_NAME environment variable not set")
         return inifile_path
 
+    def _get_float_value_or_default(self, name: str, default: float) -> float:
+        if value := self.inifile.find(self._inifile_section, "UPDATE_INTERVAL"):
+            return float(value)
+        return default
+
+    @property
+    def update_interval(self) -> float:
+        return self._get_float_value_or_default("UPDATE_INTERVAL", 0.1)
+
     @property
     def is_lubrication_enabled(self) -> bool:
         return bool(strtobool(self.inifile.find(self._inifile_section, "ENABLED") or "false"))
@@ -87,3 +111,11 @@ class IniAdapter(IniInterface):
     @property
     def pressure_hold_time(self) -> int:
         return int(self.inifile.find(self._inifile_section, "PRESSURE_HOLD_TIME"))
+
+    @property
+    def movement_threshold(self) -> float:
+        return self._get_float_value_or_default("MOVEMENT_THRESHOLD", 0.1)
+
+    @property
+    def movement_window_seconds(self) -> float:
+        return self._get_float_value_or_default("MOVEMENT_WINDOW_SECONDS", 1)

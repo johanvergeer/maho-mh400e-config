@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
+import dataclasses
+import datetime
+import math
 import time
+from collections import deque
 
 from lubrication.adapters.interfaces import (
     CommandInterface,
@@ -8,6 +12,86 @@ from lubrication.adapters.interfaces import (
     Logger,
     StatInterface,
 )
+
+
+@dataclasses.dataclass
+class _PositionsAtTime:
+    """Represents the recorded axis positions at a specific point in time."""
+
+    time: datetime.datetime
+    x_position: float
+    y_position: float
+    z_position: float
+
+
+class AxisMotionTracker:
+    """Tracks axis positions over time to detect recent movement.
+
+    This tracker maintains a sliding window of recorded axis positions and determines
+    whether significant movement has occurred within a configurable time window.
+    """
+
+    def __init__(self, hal: HalInterface, ini: IniInterface) -> None:
+        """Initializes the motion tracker with HAL access and configuration.
+
+        Args:
+            hal: The HAL interface used to read axis positions.
+            ini: The configuration interface providing movement thresholds and timing.
+        """
+        self._hal = hal
+        self._ini = ini
+
+        if self._ini.update_interval > self._ini.movement_window_seconds:
+            raise ValueError(
+                "update_interval cannot exceed movement_window_seconds "
+                "— insufficient data points for movement tracking."
+            )
+
+        self._positions: deque[_PositionsAtTime] = deque(
+            maxlen=math.ceil(self._ini.movement_window_seconds / self._ini.update_interval)
+        )
+
+    def update(self, time: datetime.datetime) -> None:
+        """Records the current axis positions at the given time.
+
+        Args:
+            time: The timestamp associated with the position sample.
+        """
+        self._positions.append(
+            _PositionsAtTime(
+                time,
+                self._hal.x_axis_position,
+                self._hal.y_axis_position,
+                self._hal.z_axis_position,
+            )
+        )
+
+    @property
+    def has_moved_recently(self) -> bool:
+        """Indicates whether the axes have moved significantly in the recent time window.
+
+        Returns:
+            True if movement exceeded the configured threshold during the sliding window;
+            False otherwise.
+        """
+        if len(self._positions) < 2:
+            return False
+
+        return self._distance_moved() > self._ini.movement_threshold
+
+    def _distance_moved(self) -> float:
+        """Calculates the maximum axis displacement within the tracked time window.
+
+        Returns:
+            The largest absolute movement among X, Y, and Z axes.
+        """
+        first = self._positions[0]
+        last = self._positions[-1]
+        return max(
+            abs(last.x_position - first.x_position),
+            abs(last.y_position - first.y_position),
+            abs(last.z_position - first.z_position),
+        )
 
 
 class LubricationTimer:
