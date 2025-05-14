@@ -88,9 +88,15 @@ class IniAdapter(IniInterface):
         return inifile_path
 
     def _get_float_value_or_default(self, name: str, default: float) -> float:
-        if value := self.inifile.find(self._inifile_section, "UPDATE_INTERVAL"):
+        if value := self.inifile.find(self._inifile_section, name):
             return float(value)
         return default
+
+    def _get_int_value_or_default(self, name: str, default: int) -> int:
+        if value := self.inifile.find(self._inifile_section, name):
+            return int(value)
+        return default
+
 
     @property
     def update_interval(self) -> float:
@@ -99,10 +105,6 @@ class IniAdapter(IniInterface):
     @property
     def is_lubrication_enabled(self) -> bool:
         return bool(strtobool(self.inifile.find(self._inifile_section, "ENABLED") or "false"))
-
-    @property
-    def pump_interval(self) -> int:
-        return int(self.inifile.find(self._inifile_section, "PUMP_INTERVAL_1"))
 
     @property
     def pressure_timeout(self) -> int:
@@ -119,3 +121,7 @@ class IniAdapter(IniInterface):
     @property
     def movement_window_seconds(self) -> float:
         return self._get_float_value_or_default("MOVEMENT_WINDOW_SECONDS", 1)
+
+    @property
+    def interval_consecutive_movement(self) -> int:
+        return self._get_int_value_or_default("INTERVAL_CONSECUTIVE_MOVEMENT", 16 * 60)

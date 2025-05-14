@@ -19,7 +19,6 @@ def make_ini(lubrication_enabled: bool = True) -> IniInterface:
     ini = MagicMock(spec=IniInterface)
 
     ini.is_lubrication_enabled = lubrication_enabled
-    ini.pump_interval = 480
     ini.pressure_timeout = 60
     ini.pressure_hold_time = 15
 
