@@ -35,6 +35,16 @@ class HalInterface(ABC):
     def deactivate_error(self) -> None:
         raise NotImplementedError
 
+    def __str__(self):
+        return (
+            f"HAL status:\n"
+            f"  Machine ON     : {self.is_machine_on}\n"
+            f"  Pressure OK    : {self.is_pressure_ok}\n"
+            f"  X-axis position: {self.x_axis_position:.3f}\n"
+            f"  Y-axis position: {self.y_axis_position:.3f}\n"
+            f"  Z-axis position: {self.z_axis_position:.3f}"
+        )
+
 
 class StatInterface(ABC):
     def poll(self) -> None:
@@ -113,6 +123,17 @@ class IniInterface(ABC):
         """
         raise NotImplementedError
 
+    def __str__(self):
+        return (
+            "Ini settings:\n"
+            f"  Lubrication enabled        : {self.is_lubrication_enabled}\n"
+            f"  Update interval            : {self.update_interval:.3f} s\n"
+            f"  Interval for movement lube : {self.interval_consecutive_movement} s\n"
+            f"  Pressure timeout           : {self.pressure_timeout} s\n"
+            f"  Pressure hold time         : {self.pressure_hold_time} s\n"
+            f"  Movement threshold         : {self.movement_threshold:.4f} mm\n"
+            f"  Movement window            : {self.movement_window_seconds:.3f} s"
+        )
 
 class Logger(Protocol):
     def info(self, msg: str) -> None: ...
