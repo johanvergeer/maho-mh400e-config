@@ -19,10 +19,10 @@ LUBRICATION_PKG_DIR="$PROJECT_DIR/lubrication"
 LUBRICATION_DIST_DIR="$LUBRICATION_PKG_DIR/dist"
 
 echo -e "${CYAN}🔁 Bumping patch version...${RESET}"
+cd "$LUBRICATION_PKG_DIR"
 poetry version patch
 
 echo -e "${CYAN}📦 Building package in:${RESET} $LUBRICATION_PKG_DIR"
-cd "$LUBRICATION_PKG_DIR"
 poetry build
 
 LUBRICATION_WHL_FILE=$(ls "$LUBRICATION_DIST_DIR"/*.whl | sort -V | tail -n 1)
