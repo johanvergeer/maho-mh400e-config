@@ -100,18 +100,22 @@ class LubricationTimer:
         axis_motion_tracker: AxisMotionTracker,
         ini: IniInterface,
         now: float,
+        logger: Logger,
         machine_start_lubricate: bool = True,
     ):
         """
         Initialize the lubrication timer.
-
+        
         Args:
             axis_motion_tracker: Instance to track axis movements.
+            ini: The configuration interface to provide lubrication thresholds.
             now: The current time in minutes, passed by the caller.
+            logger: Instance for logging relevant events and errors.
             machine_start_lubricate: Whether to trigger lubrication on machine start.
         """
         self._axis_tracker = axis_motion_tracker
         self._ini = ini
+        self._logger = logger
         self._last_reset: float = now  # Timestamp of the last lubrication pulse
         self._axes_have_moved: bool = (
             False  # Whether the axes have moved since the last lubrication pulse
@@ -131,6 +135,8 @@ class LubricationTimer:
         Args:
             now: The current time in minutes, passed by the caller.
         """
+        if self._ini.debug_mode:
+            self._logger.info("Resetting lubrication timer.")
         self._last_reset = now
         self._consecutive_motion_start = None
         self._axes_have_moved = False
@@ -150,13 +156,19 @@ class LubricationTimer:
         """
         # Rule 1: Machine start lubrication
         if self.machine_start_lubricate:
+            if self._ini.debug_mode:
+                self._logger.info("Lubrication should begin because of machine start.")
             self.machine_start_lubricate = False  # Clear the flag after the first lubrication pulse
             return True
 
         if self._axis_tracker.has_moved_recently:
+            if self._ini.debug_mode:
+                self._logger.info("Detected recent axes movement.")
             self._axes_have_moved = True
 
         if self._last_reset <= now - self.interval_consecutive_movement and self._axes_have_moved:
+            if self._ini.debug_mode:
+                self._logger.info("Lubrication should start now because of timer and axes movement.")
             self.reset(now)
             return True
 
