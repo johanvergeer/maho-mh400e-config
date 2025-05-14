@@ -12,3 +12,20 @@ Key features:
 Note:
 - Detailed wiring and I/O assignments (e.g. relay mappings, E-stop chain, CNC ready logic)
   are documented inline in the HAL files where they are implemented.
+
+
+# To get this running
+
+1. Install pipx
+2. Install poetry
+3. Configure poetry
+
+```bash
+poetry config virtualenvs.in-project true
+```
+
+4. Create and install the `lubrication` package
+
+```bash
+./install.sh
+```
