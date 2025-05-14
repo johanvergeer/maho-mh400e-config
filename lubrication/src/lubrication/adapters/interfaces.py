@@ -1,57 +1,75 @@
+from abc import ABC
 from typing import Protocol
 
 
-class HalInterface(Protocol):
+class HalInterface(ABC):
     @property
-    def is_machine_on(self) -> bool: ...
-
-    @property
-    def is_pressure_ok(self) -> bool: ...
+    def is_machine_on(self) -> bool:
+        raise NotImplementedError
 
     @property
-    def x_axis_position(self) -> float: ...
+    def is_pressure_ok(self) -> bool:
+        raise NotImplementedError
 
     @property
-    def y_axis_position(self) -> float: ...
+    def x_axis_position(self) -> float:
+        raise NotImplementedError
 
     @property
-    def z_axis_position(self) -> float: ...
+    def y_axis_position(self) -> float:
+        raise NotImplementedError
 
-    def activate_pump(self) -> None: ...
+    @property
+    def z_axis_position(self) -> float:
+        raise NotImplementedError
 
-    def deactivate_pump(self) -> None: ...
+    def activate_pump(self) -> None:
+        raise NotImplementedError
 
-    def activate_error(self) -> None: ...
+    def deactivate_pump(self) -> None:
+        raise NotImplementedError
 
-    def deactivate_error(self) -> None: ...
+    def activate_error(self) -> None:
+        raise NotImplementedError
 
-
-class StatInterface(Protocol):
-    def poll(self) -> None: ...
-
-
-class CommandInterface(Protocol):
-    def text_msg(self, message: str) -> None: ...
-
-    def error_msg(self, message: str) -> None: ...
+    def deactivate_error(self) -> None:
+        raise NotImplementedError
 
 
-class IniInterface(Protocol):
+class StatInterface(ABC):
+    def poll(self) -> None:
+        raise NotImplementedError
+
+
+class CommandInterface(ABC):
+    def text_msg(self, message: str) -> None:
+        raise NotImplementedError
+
+    def error_msg(self, message: str) -> None:
+        raise NotImplementedError
+
+
+class IniInterface(ABC):
     @property
     def update_interval(self) -> float:
         """The interval at which to run the lubrication controller update loop."""
+        raise NotImplementedError
 
     @property
-    def is_lubrication_enabled(self) -> bool: ...
+    def is_lubrication_enabled(self) -> bool:
+        raise NotImplementedError
 
     @property
-    def pump_interval(self) -> int: ...
+    def pump_interval(self) -> int:
+        raise NotImplementedError
 
     @property
-    def pressure_timeout(self) -> int: ...
+    def pressure_timeout(self) -> int:
+        raise NotImplementedError
 
     @property
-    def pressure_hold_time(self) -> int: ...
+    def pressure_hold_time(self) -> int:
+        raise NotImplementedError
 
     @property
     def movement_threshold(self) -> float:
@@ -60,6 +78,7 @@ class IniInterface(Protocol):
         This value filters out noise or mechanical backlash by ignoring movements
         smaller than this threshold.
         """
+        raise NotImplementedError
 
     @property
     def movement_window_seconds(self) -> float:
@@ -68,6 +87,7 @@ class IniInterface(Protocol):
         If the axes move too slowly, such as during creeping, the total movement
         must still exceed the threshold within this time window to be recognized.
         """
+        raise NotImplementedError
 
 
 class Logger(Protocol):

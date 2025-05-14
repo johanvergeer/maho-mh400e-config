@@ -8,9 +8,21 @@ from lubrication.controller import AxisMotionTracker
 
 class DummyHal(HalInterface):
     def __init__(self, x: float = 0, y: float = 0, z: float = 0):
-        self.x_axis_position = x
-        self.y_axis_position = y
-        self.z_axis_position = z
+        self._x_axis_position = x
+        self._y_axis_position = y
+        self._z_axis_position = z
+
+    @property
+    def x_axis_position(self) -> float:
+        return self._x_axis_position
+
+    @property
+    def y_axis_position(self) -> float:
+        return self._y_axis_position
+
+    @property
+    def z_axis_position(self) -> float:
+        return self._z_axis_position
 
 
 class DummyIni(IniInterface):
@@ -47,7 +59,7 @@ def test_movement_detected() -> None:
     now = datetime.datetime.now()
     tracker.update(now)
 
-    hal.x_axis_position = 0.1  # movement above threshold
+    hal._x_axis_position = 0.1  # movement above threshold
     tracker.update(now + datetime.timedelta(seconds=DummyIni.movement_window_seconds))
 
     assert tracker.has_moved_recently
@@ -61,7 +73,7 @@ def test_slow_creep_below_threshold() -> None:
 
     # Simulate 10 small steps of 0.004 (total displacement = 0.04, just below threshold)
     for i in range(10):
-        hal.x_axis_position = i * 0.004
+        hal._x_axis_position = i * 0.004
         tracker.update(now + datetime.timedelta(seconds=i * DummyIni.update_interval))
 
     assert not tracker.has_moved_recently
@@ -75,7 +87,7 @@ def test_slow_creep_above_threshold() -> None:
 
     # Simulate 10 small steps of 0.006 (total displacement = 0.06, just above threshold)
     for i in range(10):
-        hal.x_axis_position = i * 0.006
+        hal._x_axis_position = i * 0.006
         tracker.update(now + datetime.timedelta(seconds=i * DummyIni.update_interval))
 
     assert tracker.has_moved_recently
