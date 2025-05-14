@@ -97,6 +97,9 @@ class IniAdapter(IniInterface):
             return int(value)
         return default
 
+    @property
+    def debug_mode(self) -> bool:
+        return bool(strtobool(self.inifile.find(self._inifile_section, "DEBUG_MODE") or "false"))
 
     @property
     def update_interval(self) -> float:

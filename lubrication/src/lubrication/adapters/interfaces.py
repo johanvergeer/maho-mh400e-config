@@ -45,6 +45,25 @@ class HalInterface(ABC):
             f"  Z-axis position: {self.z_axis_position:.3f}"
         )
 
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"is_machine_on={self.is_machine_on}, "
+            f"is_pressure_ok={self.is_pressure_ok}, "
+            f"x={self.x_axis_position:.3f}, "
+            f"y={self.y_axis_position:.3f}, "
+            f"z={self.z_axis_position:.3f})"
+        )
+
+    def __hash__(self):
+        return hash((
+            self.is_machine_on,
+            self.is_pressure_ok,
+            round(self.x_axis_position, 2),
+            round(self.y_axis_position, 2),
+            round(self.z_axis_position, 2),
+        ))
+
 
 class StatInterface(ABC):
     def poll(self) -> None:
@@ -60,6 +79,16 @@ class CommandInterface(ABC):
 
 
 class IniInterface(ABC):
+    @property
+    def debug_mode(self) -> bool:
+        """Indicates whether the application is running in debug mode.
+    
+        When True, additional debug information and logging might be enabled
+        to assist in troubleshooting or development. When False, the application
+        operates in normal mode without additional debugging output.
+        """
+        raise NotImplementedError
+
     @property
     def update_interval(self) -> float:
         """The interval at which to run the lubrication controller update loop."""
@@ -134,6 +163,19 @@ class IniInterface(ABC):
             f"  Movement threshold         : {self.movement_threshold:.4f} mm\n"
             f"  Movement window            : {self.movement_window_seconds:.3f} s"
         )
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"is_lubrication_enabled={self.is_lubrication_enabled}, "
+            f"update_interval={self.update_interval:.3f}, "
+            f"interval_consecutive_movement={self.interval_consecutive_movement}, "
+            f"pressure_timeout={self.pressure_timeout}, "
+            f"pressure_hold_time={self.pressure_hold_time}, "
+            f"movement_threshold={self.movement_threshold:.4f}, "
+            f"movement_window_seconds={self.movement_window_seconds:.3f})"
+        )
+
 
 class Logger(Protocol):
     def info(self, msg: str) -> None: ...
