@@ -7,3 +7,6 @@ net motion-enabled => lube_pump.machine_on <= motion.motion-enabled
 net pressure-ok => lube_pump.pressure_ok <= hm2_7i94.0.7i84.0.3.input-07
 net pump-enable => lube_pump.pump_active => hm2_7i94.0.7i84.0.3.output-01
 net lube-error => lube_pump.error_active
+net x-pos-fb lube_pump.x_axis_position
+net y-pos-fb lube_pump.y_axis_position
+net z-pos-fb lube_pump.z_axis_position
