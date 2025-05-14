@@ -1,3 +1,4 @@
+import datetime
 import time
 from unittest.mock import MagicMock, call, create_autospec
 
@@ -11,7 +12,7 @@ from lubrication.adapters.interfaces import (
     Logger,
     StatInterface,
 )
-from lubrication.controller import LubePumpController, LubricationTimer
+from lubrication.controller import AxisMotionTracker, LubePumpController, LubricationTimer
 
 
 def make_ini(lubrication_enabled: bool = True) -> IniInterface:
@@ -27,7 +28,8 @@ def make_ini(lubrication_enabled: bool = True) -> IniInterface:
 
 def make_timer(ini: IniInterface | None = None) -> LubricationTimer:
     ini = ini or make_ini()
-    timer = LubricationTimer(interval_seconds=ini.pump_interval)
+    axis_motion_tracker = create_autospec(AxisMotionTracker)
+    timer = LubricationTimer(axis_motion_tracker, ini, datetime.datetime.now().timestamp())
 
     return timer
 

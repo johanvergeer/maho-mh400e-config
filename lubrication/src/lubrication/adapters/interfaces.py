@@ -57,18 +57,42 @@ class IniInterface(ABC):
 
     @property
     def is_lubrication_enabled(self) -> bool:
+        """Indicates whether the lubrication system is enabled.
+
+        When True, the lubrication control logic is active, and the system
+        will perform lubrication cycles. When False, the lubrication logic
+        is disabled, and no lubrication actions are performed.
+        """
         raise NotImplementedError
 
     @property
-    def pump_interval(self) -> int:
+    def interval_consecutive_movement(self) -> int:
+        """The time interval after which lubrication should run if any movements
+        occurred within this timeframe.
+
+        This ensures that lubrication is triggered periodically based on
+        movements within a defined time window.
+        """
         raise NotImplementedError
 
     @property
     def pressure_timeout(self) -> int:
+        """The maximum time in seconds allowed for the lubrication system to reach the required
+         pressure.
+
+        If the required pressure is not achieved within this time frame, an error is triggered
+        to indicate a potential malfunction or issue with the lubrication system.
+        """
         raise NotImplementedError
 
     @property
     def pressure_hold_time(self) -> int:
+        """The duration, in seconds, that the lubrication pump continues to operate
+        after the required pressure has been reached.
+
+        This ensures thorough lubrication by maintaining pump operation
+        for a defined period after pressure is established.
+        """
         raise NotImplementedError
 
     @property

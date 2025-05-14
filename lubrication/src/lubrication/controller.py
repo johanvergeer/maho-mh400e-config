@@ -95,20 +95,72 @@ class AxisMotionTracker:
 
 
 class LubricationTimer:
-    def __init__(self, interval_seconds: float, now: float = None):
-        self.interval = interval_seconds
-        self._last_reset = now if now is not None else time.time()
+    def __init__(
+        self,
+        axis_motion_tracker: AxisMotionTracker,
+        ini: IniInterface,
+        now: float,
+        machine_start_lubricate: bool = True,
+    ):
+        """
+        Initialize the lubrication timer.
 
-    def reset(self, now: float = None) -> None:
-        self._last_reset = now if now is not None else time.time()
+        Args:
+            axis_motion_tracker: Instance to track axis movements.
+            now: The current time in minutes, passed by the caller.
+            machine_start_lubricate: Whether to trigger lubrication on machine start.
+        """
+        self._axis_tracker = axis_motion_tracker
+        self._ini = ini
+        self._last_reset: float = now  # Timestamp of the last lubrication pulse
+        self._axes_have_moved: bool = (
+            False  # Whether the axes have moved since the last lubrication pulse
+        )
+        self._consecutive_motion_start: float | None = (
+            None  # Start timestamp of consecutive axis motion
+        )
+        self.machine_start_lubricate = machine_start_lubricate
 
-    def should_lubricate(self, now: float = None) -> bool:
-        now = now if now is not None else time.time()
-        return (now - self._last_reset) >= self.interval
+        # Configurable lubrication thresholds
+        self.interval_consecutive_movement = self._ini.interval_consecutive_movement
 
-    def elapsed(self, now: float = None) -> float:
-        now = now if now is not None else time.time()
-        return now - self._last_reset
+    def reset(self, now: float) -> None:
+        """
+        Reset the lubrication timer and update the last reset timestamp.
+
+        Args:
+            now: The current time in minutes, passed by the caller.
+        """
+        self._last_reset = now
+        self._consecutive_motion_start = None
+        self._axes_have_moved = False
+
+    def should_lubricate(self, now: float) -> bool:
+        """
+        Checks if lubrication should occur, based on the following conditions:
+        1. Machine start triggers lubrication (one-time when enabled).
+        2. Continuous axis movement for more than 16 minutes.
+        3. An axis starts moving after previously no movement.
+
+        Args:
+            now: The current time in minutes, passed by the caller.
+
+        Returns:
+            True if lubrication is needed, False otherwise.
+        """
+        # Rule 1: Machine start lubrication
+        if self.machine_start_lubricate:
+            self.machine_start_lubricate = False  # Clear the flag after the first lubrication pulse
+            return True
+
+        if self._axis_tracker.has_moved_recently:
+            self._axes_have_moved = True
+
+        if self._last_reset <= now - self.interval_consecutive_movement and self._axes_have_moved:
+            self.reset(now)
+            return True
+
+        return False
 
 
 class LubricationState:
