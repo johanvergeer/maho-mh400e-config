@@ -29,6 +29,6 @@ LUBRICATION_WHL_FILE=$(ls "$LUBRICATION_DIST_DIR"/*.whl | sort -V | tail -n 1)
 
 echo -e "${CYAN}⬆️  Installing package:${RESET} ${BOLD}$LUBRICATION_WHL_FILE${RESET}"
 cd "$PROJECT_DIR"
-sudo python3 -m pip install --upgrade "$LUBRICATION_WHL_FILE"
+sudo python3 -m pip install --upgrade "$LUBRICATION_WHL_FILE" --break-system-packages
 
 echo -e "${GREEN}✅ Done.${RESET}"
