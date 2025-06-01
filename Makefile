@@ -16,8 +16,17 @@ COMPONENTS = components/src/calculate.comp components/src/mh400e_spindle.comp
 $(LOGIC_SO): $(LOGIC_SRC)
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
+# Default help command
+.PHONY: help
+help: ## Toon dit help-overzicht
+	@echo ""
+	@echo "📦  Beschikbare commando's:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+
 .PHONY: venv
-venv:
+venv: ## Maak virtuele omgeving en installeer pytest als die nog niet bestaat
 	@if [ ! -d $(VENV_DIR) ]; then \
 		$(PYTHON) -m venv $(VENV_DIR); \
 	fi
@@ -25,16 +34,16 @@ venv:
 	@$(PIP) show pytest > /dev/null 2>&1 || $(PIP) install pytest
 
 .PHONY: test
-test: venv $(LOGIC_SO)
+test: venv $(LOGIC_SO) ## Compileer logica en draai tests via pytest in de venv
 	$(PYTEST) components/tests
 
 .PHONY: install
-install:
+install: ## Compileer en installeer alle .comp bestanden met comp --install
 	@for comp in $(COMPONENTS); do \
 		echo "Compiling $$comp..."; \
-		comp --install $$comp; \
+		sudo halcompile --install $$comp; \
 	done
 
 .PHONY: clean
-clean:
+clean: ## Verwijder build artifacts (logic.so)
 	rm -f $(LOGIC_SO)
