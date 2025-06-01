@@ -1,7 +1,7 @@
 import ctypes
 import pathlib
 
-SRC_DIR = pathlib.Path(__file__).parents[1] / "src"
+SRC_DIR = pathlib.Path(__file__).parents[2] / "src" / "calculate"
 
 lib = ctypes.CDLL(str((SRC_DIR / "calculate.so").absolute()))  # of compile on the fly
 lib.calculate.argtypes = [ctypes.c_float]

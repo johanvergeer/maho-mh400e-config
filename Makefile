@@ -7,10 +7,10 @@ CC = gcc
 CFLAGS = -fPIC -Wall -Werror
 LDFLAGS = -shared
 
-LOGIC_SRC = components/src/calculate.c
-LOGIC_SO = components/src/calculate.so
+LOGIC_SRC = components/src/calculate/calculate_logic.c
+LOGIC_SO = components/src/calculate/calculate.so
 
-COMPONENTS = components/src/calculate.comp components/src/mh400e_spindle.comp
+COMPONENTS = components/src/calculate/calculate.comp components/src/spindle/mh400e_spindle.comp
 
 # Check en bouw logic.so
 $(LOGIC_SO): $(LOGIC_SRC)
