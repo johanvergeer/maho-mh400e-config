@@ -1,14 +1,16 @@
 component calculate "Example component with external calculation logic";
+author "Johan Vergeer";
+license "GPL";
 
 pin in float in;
 pin out float out;
+
 function _;
-license "GPL";
 ;;
 
-#include "calculate.c"  // extern bestand met de echte logica
+#include <rtapi_math.h>
+#include "calculate.c"
 
 FUNCTION(_) {
     out = calculate(in);
 }
-
