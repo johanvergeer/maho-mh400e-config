@@ -1,4 +1,4 @@
-component safe_spindle "Safe spindle control with fault detection and spin-up delay";
+component mh400e_spindle "Safe spindle control with fault detection and spin-up delay";
 
 pin in bit requested_forward "User requests forward spindle rotation";
 pin in bit requested_reverse "User requests reverse spindle rotation";
@@ -20,6 +20,8 @@ license "GPL";
 
 option singleton;
 
+;;
+
 #include <rtapi.h>
 #include <hal.h>
 
@@ -37,11 +39,11 @@ static long spindle_start_time_ns = 0;
 
 FUNCTION(_) {
     // ===== Preconditie: dubbel richtingverzoek = fout =====
-    if (*requested_forward && *requested_reverse) {
-        *spindle_enable_forward = 0;
-        *spindle_enable_reverse = 0;
-        *fault = 1;
-        *running = 0;
+    if (requested_forward && requested_reverse) {
+        spindle_enable_forward = 0;
+        spindle_enable_reverse = 0;
+        fault = 1;
+        running = 0;
         state = STATE_FAULT;
         spindle_start_time_ns = 0;
         return;
@@ -50,59 +52,59 @@ FUNCTION(_) {
     // ===== Statemachine =====
     switch (state) {
         case STATE_IDLE:
-            if (!(*safety_ok) || !(*spindle_enabled) || *spindle_halt) {
+            if (!(safety_ok) || !(spindle_enabled) || spindle_halt) {
                 break;
             }
-            if (*requested_forward) {
+            if (requested_forward) {
                 state = STATE_RUNNING_FWD;
-            } else if (*requested_reverse) {
+            } else if (requested_reverse) {
                 state = STATE_RUNNING_REV;
             }
             break;
 
         case STATE_RUNNING_FWD:
-            if (!(*safety_ok) || !(*spindle_enabled) || *requested_reverse) {
+            if (!(safety_ok) || !(spindle_enabled) || requested_reverse) {
                 state = STATE_FAULT;
                 break;
             }
-            if (!(*requested_forward)) {
+            if (!(requested_forward)) {
                 state = STATE_IDLE;
             }
             break;
 
         case STATE_RUNNING_REV:
-            if (!(*safety_ok) || !(*spindle_enabled) || *requested_forward) {
+            if (!(safety_ok) || !(spindle_enabled) || requested_forward) {
                 state = STATE_FAULT;
                 break;
             }
-            if (!(*requested_reverse)) {
+            if (!(requested_reverse)) {
                 state = STATE_IDLE;
             }
             break;
 
         case STATE_FAULT:
-            if (*reset && *safety_ok && *spindle_enabled && !(*spindle_halt)) {
+            if (reset && safety_ok && spindle_enabled && !(spindle_halt)) {
                 state = STATE_IDLE;
             }
             break;
     }
 
     // ===== Outputs op basis van state =====
-    *spindle_enable_forward = (state == STATE_RUNNING_FWD);
-    *spindle_enable_reverse = (state == STATE_RUNNING_REV);
+    spindle_enable_forward = (state == STATE_RUNNING_FWD);
+    spindle_enable_reverse = (state == STATE_RUNNING_REV);
 
-    long now = hal_get_time();
+    // long now = hal_get_time();
     if (state == STATE_RUNNING_FWD || state == STATE_RUNNING_REV) {
         if (spindle_start_time_ns == 0) {
-            spindle_start_time_ns = now;
+            // spindle_start_time_ns = now;
         }
     } else {
         spindle_start_time_ns = 0;
     }
 
-    bool spindle_running_ready = (spindle_start_time_ns > 0) &&
-                                 ((now - spindle_start_time_ns) >= SPINDLE_SPINUP_TIME_NS);
+    //bool spindle_running_ready = (spindle_start_time_ns > 0) &&
+    //                              ((now - spindle_start_time_ns) >= SPINDLE_SPINUP_TIME_NS);
 
-    *running = spindle_running_ready;
-    *fault = (state == STATE_FAULT);
+    // running = spindle_running_ready;
+    fault = (state == STATE_FAULT);
 }
