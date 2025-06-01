@@ -1,12 +1,14 @@
-component mycomponent "Example component with external calculation logic";
+component calculate "Example component with external calculation logic";
 
 pin in float in;
 pin out float out;
+function _;
+license "GPL";
+;;
 
-include "logic.c"  // extern bestand met de echte logica
+#include "calculate.c"  // extern bestand met de echte logica
 
 FUNCTION(_) {
     out = calculate(in);
 }
 
-endcomponent
