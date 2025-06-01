@@ -8,3 +8,4 @@ debugging.md
 **/dist
 **/__pycache__
 **/.venv
+*.so

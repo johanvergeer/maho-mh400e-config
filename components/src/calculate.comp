@@ -1,0 +1,12 @@
+component mycomponent "Example component with external calculation logic";
+
+pin in float in;
+pin out float out;
+
+include "logic.c"  // extern bestand met de echte logica
+
+FUNCTION(_) {
+    out = calculate(in);
+}
+
+endcomponent
