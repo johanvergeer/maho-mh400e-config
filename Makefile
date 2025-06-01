@@ -7,16 +7,17 @@ CC = gcc
 CFLAGS = -fPIC -Wall -Werror
 LDFLAGS = -shared
 
-LOGIC_SRC = components/src/calculate/calculate_logic.c
-LOGIC_SO = components/src/calculate/calculate.so
+# Vind alle .c files in subfolders van components/src
+C_SOURCES := $(shell find components/src -type f -name '*.c')
+SO_TARGETS := $(C_SOURCES:.c=.so)
 
-COMPONENTS = components/src/calculate/calculate.comp components/src/spindle/mh400e_spindle.comp
-
-# Check en bouw logic.so
-$(LOGIC_SO): $(LOGIC_SRC)
+# Regels om .so te bouwen vanuit .c
+%.so: %.c
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-# Default help command
+.PHONY: build-sos
+build-sos: $(SO_TARGETS) ## Compileer alle .so bestanden
+
 .PHONY: help
 help: ## Toon dit help-overzicht
 	@echo ""
@@ -34,16 +35,16 @@ venv: ## Maak virtuele omgeving en installeer pytest als die nog niet bestaat
 	@$(PIP) show pytest > /dev/null 2>&1 || $(PIP) install pytest
 
 .PHONY: test
-test: venv $(LOGIC_SO) ## Compileer logica en draai tests via pytest in de venv
+test: venv $(SO_TARGETS) ## Compileer alle .so bestanden en draai tests
 	$(PYTEST) components/tests
 
 .PHONY: install
 install: ## Compileer en installeer alle .comp bestanden met comp --install
-	@for comp in $(COMPONENTS); do \
+	@for comp in $(shell find components/src -name '*.comp'); do \
 		echo "Compiling $$comp..."; \
 		sudo halcompile --install $$comp; \
 	done
 
 .PHONY: clean
-clean: ## Verwijder build artifacts (logic.so)
-	rm -f $(LOGIC_SO)
+clean: ## Verwijder alle .so bestanden
+	rm -f $(SO_TARGETS)

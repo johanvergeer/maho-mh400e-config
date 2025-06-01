@@ -1,0 +1,14 @@
+component lubrication "Maho MH400E lubrication";
+author "Johan Vergeer";
+license "GPL";
+
+pin in float in;
+pin out float out;
+
+function _;
+;;
+
+#include <rtapi_math.h>
+#include "lubrication_logic.c"
+
+FUNCTION(_) {}
