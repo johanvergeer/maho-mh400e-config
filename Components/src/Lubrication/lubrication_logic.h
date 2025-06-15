@@ -1,4 +1,10 @@
+//
+// Created by Johan Vergeer on 15/06/2025.
+//
 #include <stdbool.h>
+
+#ifndef LUBRICATION_LOGIC_H
+#define LUBRICATION_LOGIC_H
 
 /* The possible states of the lubrication pump */
 typedef enum {
@@ -29,12 +35,10 @@ typedef struct {
     LubricationState state; /* The current lubrication state. */
 } LubricationPumpOutput;
 
-/**
- * @brief Determine the next state of the lubrication pump based on time and input.
- *
- * @param time The current time in seconds.
- * @param input The input signals for the lubrication pump.
- * @return The output signals for the lubrication pump.
- */
-LubricationPumpOutput lubricate(float time, LubricationPumpInput input) {
-}
+LubricationPumpOutput lubricate(
+    float time,
+    LubricationPumpInput input,
+    LubricationConfig config
+);
+
+#endif //LUBRICATION_LOGIC_H

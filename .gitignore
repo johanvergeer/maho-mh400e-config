@@ -9,3 +9,6 @@ debugging.md
 **/__pycache__
 **/.venv
 *.so
+__compile_commands.json
+cmake-build-debug
+Components/build
