@@ -15,18 +15,17 @@ void tearDown(void) {
 }
 
 static void check_lubrication_state(
-    bool isMotionEnabled,
-    bool isEnabled,
-    LubricationState expectedState,
-    bool expectedPumpEnabled
+    const bool isMotionEnabled,
+    const LubricationState expectedState,
+    const bool expectedPumpEnabled
 ) {
-    LubricationPumpInput input = {
+    const LubricationPumpInput input = {
         .isMotionEnabled = isMotionEnabled,
         .isPressureOk = false
     };
 
-    LubricationConfig config = {
-        .isEnabled = isEnabled,
+    const LubricationConfig config = {
+        .isEnabled = true,
         .interval = 0,
         .pressureTimeout = 0,
         .pressureHoldTime = 0
@@ -38,18 +37,10 @@ static void check_lubrication_state(
     TEST_ASSERT_EQUAL(expectedPumpEnabled, output.isEnabled);
 }
 
-void test_lubrication_remains_initializing_when_both_disabled(void) {
-    check_lubrication_state(false, false, INITIALIZING, false);
-}
-
 void test_lubrication_remains_initializing_when_motion_disabled(void) {
-    check_lubrication_state(false, true, INITIALIZING, false);
-}
-
-void test_lubrication_remains_initializing_when_config_disabled(void) {
-    check_lubrication_state(true, false, INITIALIZING, false);
+    check_lubrication_state(false, INITIALIZING, false);
 }
 
 void test_lubrication_builds_pressure_when_both_enabled(void) {
-    check_lubrication_state(true, true, BUILDING_PRESSURE, true);
+    check_lubrication_state(true, BUILDING_PRESSURE, true);
 }

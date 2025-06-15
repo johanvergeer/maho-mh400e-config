@@ -15,9 +15,15 @@ LubricationPumpOutput lubricate(
 ) {
     static LubricationPumpOutput output = {false, INITIALIZING};
 
+    if (config.isEnabled == false) {
+        output.isEnabled = false;
+        output.state = DISABLED;
+        return output;
+    }
+
     switch (output.state) {
         case INITIALIZING:
-            if (input.isMotionEnabled && config.isEnabled) {
+            if (input.isMotionEnabled) {
                 output.state = BUILDING_PRESSURE;
                 output.isEnabled = true;
             } else {
