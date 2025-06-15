@@ -13,19 +13,25 @@ Note:
 - Detailed wiring and I/O assignments (e.g. relay mappings, E-stop chain, CNC ready logic)
   are documented inline in the HAL files where they are implemented.
 
-
 # To get this running
 
-1. Install pipx
-2. Install poetry
-3. Configure poetry
+## CLion
 
-```bash
-poetry config virtualenvs.in-project true
+- Step 1: Install [Ceedling](https://www.throwtheswitch.org/ceedling#get-ceedling-section)
+- Step 2: Run Ceedling build. This is 
+
+```shell
+$ cd Components
+$ ceedling build
 ```
 
-4. Create and install the `lubrication` package
+- Step 3: Open CLion using the CMake configuration
 
-```bash
-./install.sh
+## To run the tests
+
+Run the tests from the Components directory once Ceedling is installed.
+
+```shell
+$ cd Components
+$ ceedling test
 ```
