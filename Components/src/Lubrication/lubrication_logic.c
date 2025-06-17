@@ -17,6 +17,11 @@ LubricationPumpOutput lubricate(
     const LubricationPumpInput input,
     const LubricationConfig config
 ) {
+    if (output.state == ERROR) {
+        // Once the ERROR state is reached a hard reset is required.
+        return output;
+    }
+
     if (config.isEnabled == false || input.isMotionEnabled == false) {
         output.state = DISABLED;
         return output;
