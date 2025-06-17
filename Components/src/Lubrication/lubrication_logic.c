@@ -36,6 +36,13 @@ void lubricate(
         case INITIALIZING:
             start_build_pressure(time, state);
             break;
+        case DISABLED:
+            if (time - state->buildingPressureStartTime > config.interval) {
+                start_build_pressure(time, state);
+                break;
+            }
+            state->state = IDLE;
+            break;
         case BUILDING_PRESSURE:
             if (input.isPressureOk) {
                 state->state = LUBRICATING;
