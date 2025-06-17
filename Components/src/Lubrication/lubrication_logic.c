@@ -17,7 +17,7 @@ LubricationPumpOutput lubricate(
     const LubricationPumpInput input,
     const LubricationConfig config
 ) {
-    if (config.isEnabled == false) {
+    if (config.isEnabled == false || input.isMotionEnabled == false) {
         output.isEnabled = false;
         output.state = DISABLED;
         return output;
@@ -25,13 +25,9 @@ LubricationPumpOutput lubricate(
 
     switch (output.state) {
         case INITIALIZING:
-            if (input.isMotionEnabled) {
-                lastStateChangeTime = time;
-                output.state = BUILDING_PRESSURE;
-                output.isEnabled = true;
-            } else {
-                output.isEnabled = false;
-            }
+            lastStateChangeTime = time;
+            output.state = BUILDING_PRESSURE;
+            output.isEnabled = true;
             break;
         case BUILDING_PRESSURE:
             if (input.isPressureOk) {

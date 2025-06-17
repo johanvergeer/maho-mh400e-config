@@ -24,6 +24,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Test")
         ${LUBRICATION_TESTS}/test_lubrication_logic_building_pressure.c
         ${LUBRICATION_TESTS}/test_lubrication_logic_disabled.c
         ${LUBRICATION_TESTS}/test_lubrication_logic_initializing.c
+        ${LUBRICATION_TESTS}/test_lubrication_logic_motion_disabled.c
     )
 endif ()
 

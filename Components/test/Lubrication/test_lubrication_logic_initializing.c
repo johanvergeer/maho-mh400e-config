@@ -37,10 +37,6 @@ static void check_lubrication_state(
     TEST_ASSERT_EQUAL(expectedPumpEnabled, output.isEnabled);
 }
 
-void test_lubrication_remains_initializing_when_motion_disabled(void) {
-    check_lubrication_state(false, INITIALIZING, false);
-}
-
 void test_lubrication_builds_pressure_when_both_enabled(void) {
     check_lubrication_state(true, BUILDING_PRESSURE, true);
 }
