@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include "lubrication_logic.h"
+static LubricationPumpOutput output = {false, INITIALIZING};
 /**
  * @brief Determine the next state of the lubrication pump based on time and input.
  *
@@ -13,8 +14,6 @@ LubricationPumpOutput lubricate(
     const LubricationPumpInput input,
     const LubricationConfig config
 ) {
-    static LubricationPumpOutput output = {false, INITIALIZING};
-
     if (config.isEnabled == false) {
         output.isEnabled = false;
         output.state = DISABLED;
@@ -37,4 +36,9 @@ LubricationPumpOutput lubricate(
     }
 
     return output;
+}
+
+void lubrication_reset(void) {
+    output.isEnabled = false;
+    output.state = INITIALIZING;
 }

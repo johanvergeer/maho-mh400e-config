@@ -42,4 +42,6 @@ LubricationPumpOutput lubricate(
     LubricationConfig config
 );
 
+void lubrication_reset(void);
+
 #endif //LUBRICATION_LOGIC_H

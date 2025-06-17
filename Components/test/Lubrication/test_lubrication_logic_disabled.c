@@ -7,7 +7,7 @@
 
 
 void setUp(void) {
-    // Dit wordt automatisch voor elke test aangeroepen (indien nodig)
+    lubrication_reset();
 }
 
 void tearDown(void) {
