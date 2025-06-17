@@ -33,7 +33,6 @@ typedef struct {
 
 /* The output signals from the lubrication pump logic */
 typedef struct {
-    bool isEnabled; /* Whether the lubrication pump should be enabled. */
     LubricationState state; /* The current lubrication state. */
 } LubricationPumpOutput;
 

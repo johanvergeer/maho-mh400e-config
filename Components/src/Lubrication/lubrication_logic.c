@@ -2,7 +2,7 @@
 #include "lubrication_logic.h"
 
 static float lastStateChangeTime = 0.0f;
-static LubricationPumpOutput output = {false, INITIALIZING};
+static LubricationPumpOutput output = {INITIALIZING};
 
 /**
  * @brief Determine the next state of the lubrication pump based on time and input.
@@ -18,7 +18,6 @@ LubricationPumpOutput lubricate(
     const LubricationConfig config
 ) {
     if (config.isEnabled == false || input.isMotionEnabled == false) {
-        output.isEnabled = false;
         output.state = DISABLED;
         return output;
     }
@@ -27,21 +26,17 @@ LubricationPumpOutput lubricate(
         case INITIALIZING:
             lastStateChangeTime = time;
             output.state = BUILDING_PRESSURE;
-            output.isEnabled = true;
             break;
         case BUILDING_PRESSURE:
             if (input.isPressureOk) {
                 output.state = LUBRICATING;
-                output.isEnabled = true;
                 break;
             }
             if ((time - lastStateChangeTime) > config.pressureTimeout) {
                 output.state = ERROR;
-                output.isEnabled = false;
                 break;
             }
         default:
-            output.isEnabled = false;
             break;
     }
 
@@ -50,6 +45,5 @@ LubricationPumpOutput lubricate(
 
 void lubrication_reset(void) {
     lastStateChangeTime = 0.0f;
-    output.isEnabled = false;
     output.state = INITIALIZING;
 }

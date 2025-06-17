@@ -11,16 +11,11 @@ void setUp(void) {
 }
 
 void tearDown(void) {
-    // Dit wordt automatisch na elke test aangeroepen (indien nodig)
 }
 
-static void check_lubrication_state(
-    const bool isMotionEnabled,
-    const LubricationState expectedState,
-    const bool expectedPumpEnabled
-) {
+void test_lubrication_builds_pressure_when_both_enabled(void) {
     const LubricationPumpInput input = {
-        .isMotionEnabled = isMotionEnabled,
+        .isMotionEnabled = true,
         .isPressureOk = false
     };
 
@@ -33,10 +28,5 @@ static void check_lubrication_state(
 
     LubricationPumpOutput output = lubricate(0.0f, input, config);
 
-    TEST_ASSERT_EQUAL(expectedState, output.state);
-    TEST_ASSERT_EQUAL(expectedPumpEnabled, output.isEnabled);
-}
-
-void test_lubrication_builds_pressure_when_both_enabled(void) {
-    check_lubrication_state(true, BUILDING_PRESSURE, true);
+    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, output.state);
 }

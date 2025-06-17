@@ -77,3 +77,23 @@ void test_building_pressure_changes_to_error_when_pressure_timeout_reached() {
     // State should switch to ERROR when building pressure has timed out
     TEST_ASSERT_EQUAL(ERROR, lubricate( 1.2f, input, config ).state);
 }
+
+void test_building_pressure_remains_when_pressure_not_reached_yet() {
+    const LubricationConfig config = {
+        .isEnabled = true,
+        .interval = 0,
+        .pressureTimeout = 1.0f,
+        .pressureHoldTime = 0
+    };
+
+    const LubricationPumpInput input = {
+        .isMotionEnabled = true,
+        .isPressureOk = false
+    };
+
+    // First call lubricate to switch state to BUILDING_PRESSURE
+    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, lubricate( 0.1f, input, config ).state);
+
+    // State should switch to ERROR when building pressure has timed out
+    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, lubricate( 1.0f, input, config ).state);
+}

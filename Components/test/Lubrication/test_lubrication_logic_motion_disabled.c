@@ -11,7 +11,6 @@ void setUp(void) {
 }
 
 void tearDown(void) {
-    // Dit wordt automatisch na elke test aangeroepen (indien nodig)
 }
 
 void test_lubrication_logic_motion_disabled(void) {
