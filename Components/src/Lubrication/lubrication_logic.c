@@ -7,7 +7,7 @@
  *
  * @param time The current time in seconds.
  * @param input The input signals for the lubrication pump.
- * @param state
+ * @param state The current lubrication state
  * @param config The lubrication pump config
  * @return The output signals for the lubrication pump.
  */
