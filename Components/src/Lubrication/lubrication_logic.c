@@ -35,7 +35,7 @@ void lubricate(
             break;
         case DISABLED:
         case IDLE:
-            if (time - state->buildingPressureStartTime > config.interval) {
+            if (time - state->lastCycleEndTime > config.interval) {
                 state->buildingPressureStartTime = time;
                 state->lubricationStartTime = time;
                 state->state = BUILDING_PRESSURE;
@@ -56,6 +56,7 @@ void lubricate(
         case LUBRICATING:
             if (time - state->lubricationStartTime > config.pressureHoldTime) {
                 state->state = IDLE;
+                state->lastCycleEndTime = time;
             }
             break;
         default:

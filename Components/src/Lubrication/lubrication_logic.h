@@ -36,6 +36,7 @@ typedef struct {
     LubricationStates state; /* The current lubrication state. */
     float buildingPressureStartTime;
     float lubricationStartTime;
+    float lastCycleEndTime;
 } LubricationState;
 
 void lubricate(
