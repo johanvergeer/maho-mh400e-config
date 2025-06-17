@@ -33,6 +33,8 @@ void lubricate(
             state->lubricationStartTime = time;
             state->state = BUILDING_PRESSURE;
             break;
+        // DISABLED and IDLE have the same logic, but they have a different
+        // semantic meaning, which is used in the GUI.
         case DISABLED:
         case IDLE:
             if (time - state->lastCycleEndTime > config.interval) {
