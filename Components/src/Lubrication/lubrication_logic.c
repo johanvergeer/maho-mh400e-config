@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include "lubrication_logic.h"
 
-static float lastStateChangeTime = 0.0f;
+static float buildingPressureStartTime = 0.0f;
 static LubricationPumpOutput output = {INITIALIZING};
 
 /**
@@ -29,7 +29,7 @@ LubricationPumpOutput lubricate(
 
     switch (output.state) {
         case INITIALIZING:
-            lastStateChangeTime = time;
+            buildingPressureStartTime = time;
             output.state = BUILDING_PRESSURE;
             break;
         case BUILDING_PRESSURE:
@@ -37,7 +37,7 @@ LubricationPumpOutput lubricate(
                 output.state = LUBRICATING;
                 break;
             }
-            if ((time - lastStateChangeTime) > config.pressureTimeout) {
+            if ((time - buildingPressureStartTime) > config.pressureTimeout) {
                 output.state = ERROR;
                 break;
             }
@@ -49,6 +49,6 @@ LubricationPumpOutput lubricate(
 }
 
 void lubrication_reset(void) {
-    lastStateChangeTime = 0.0f;
+    buildingPressureStartTime = 0.0f;
     output.state = INITIALIZING;
 }
