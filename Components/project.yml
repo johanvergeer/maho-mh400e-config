@@ -34,8 +34,8 @@
 
 # Specify where to find mixins and any that should be enabled automatically
 :mixins:
-  :enabled: []
-  :load_paths: []
+  :enabled: [ ]
+  :load_paths: [ ]
 
 # further details to configure the way Ceedling handles test code
 :test_build:
@@ -45,14 +45,14 @@
 :release_build:
   :output: MyApp.out
   :use_assembly: FALSE
-  :artifacts: []
+  :artifacts: [ ]
 
 # Plugins are optional Ceedling features which can be enabled. Ceedling supports
 # a variety of plugins which may effect the way things are compiled, reported, 
 # or may provide new command options. Refer to the readme in each plugin for 
 # details on how to use it.
 :plugins:
-  :load_paths: []
+  :load_paths: [ ]
   :enabled:
     #- beep                           # beeps when finished, so you don't waste time waiting for ceedling
     - module_generator                # handy for quickly creating source, header, and test templates
@@ -76,10 +76,10 @@
 # Specify which reports you'd like from the log factory
 :report_tests_log_factory:
   :reports:
-    - json 
-    - junit 
-    - cppunit 
-    - html 
+    - json
+    - junit
+    - cppunit
+    - html
 
 # override the default extensions for your system and toolchain
 :extension:
@@ -105,14 +105,14 @@
     - src/** # In simple projects, this entry often duplicates :source
   :support:
     - test/support
-  :libraries: []
+  :libraries: [ ]
 
 # You can even specify specific files to add or remove from your test
 # and release collections. Usually it's better to use paths and let
 # Ceedling do the work for you!
 :files:
-  :test: []
-  :source: []
+  :test: [ ]
+  :source: [ ]
 
 # Compilation symbols to be injected into builds
 # See documentation for advanced options:
@@ -122,10 +122,10 @@
 :defines:
   :test:
     - TEST # Simple list option to add symbol 'TEST' to compilation of all files in all test executables
-  :release: []
+  :release: [ ]
 
   # Enable to inject name of a test as a unique compilation symbol into its respective executable build. 
-  :use_test_definition: FALSE 
+  :use_test_definition: FALSE
 
 # Configure additional command line flags provided to tools used in each build step
 # :flags:
@@ -143,47 +143,47 @@
 # Configuration Options specific to CMock. See CMock docs for details
 :cmock:
   # Core conffiguration
-  :plugins:                        # What plugins should be used by CMock?
+  :plugins: # What plugins should be used by CMock?
     - :ignore
     - :callback
-  :verbosity:  2                   # the options being 0 errors only, 1 warnings and errors, 2 normal info, 3 verbose
-  :when_no_prototypes:  :warn      # the options being :ignore, :warn, or :erro
+  :verbosity: 2                   # the options being 0 errors only, 1 warnings and errors, 2 normal info, 3 verbose
+  :when_no_prototypes: :warn      # the options being :ignore, :warn, or :erro
 
   # File configuration
-  :skeleton_path:  ''              # Subdirectory to store stubs when generated (default: '')
-  :mock_prefix:  'mock_'           # Prefix to append to filenames for mocks
-  :mock_suffix:  ''                # Suffix to append to filenames for mocks
+  :skeleton_path: ''              # Subdirectory to store stubs when generated (default: '')
+  :mock_prefix: 'mock_'           # Prefix to append to filenames for mocks
+  :mock_suffix: ''                # Suffix to append to filenames for mocks
 
   # Parser configuration
-  :strippables:  ['(?:__attribute__\s*\([ (]*.*?[ )]*\)+)']
+  :strippables: [ '(?:__attribute__\s*\([ (]*.*?[ )]*\)+)' ]
   :attributes:
-     - __ramfunc
-     - __irq
-     - __fiq
-     - register
-     - extern
+    - __ramfunc
+    - __irq
+    - __fiq
+    - register
+    - extern
   :c_calling_conventions:
-     - __stdcall
-     - __cdecl
-     - __fastcall
-  :treat_externs:  :exclude        # the options being :include or :exclud
-  :treat_inlines:  :exclude        # the options being :include or :exclud
+    - __stdcall
+    - __cdecl
+    - __fastcall
+  :treat_externs: :exclude        # the options being :include or :exclud
+  :treat_inlines: :exclude        # the options being :include or :exclud
 
   # Type handling configuration
   #:unity_helper_path: ''          # specify a string of where to find a unity_helper.h file to discover custom type assertions
-  :treat_as:                       # optionally add additional types to map custom types
-    uint8:    HEX8
-    uint16:   HEX16
-    uint32:   UINT32
-    int8:     INT8
-    bool:     UINT8
+  :treat_as: # optionally add additional types to map custom types
+    uint8: HEX8
+    uint16: HEX16
+    uint32: UINT32
+    int8: INT8
+    bool: UINT8
   #:treat_as_array:  {}            # hint to cmock that these types are pointers to something
   #:treat_as_void:  []             # hint to cmock that these types are actually aliases of void
-  :memcmp_if_unknown:  true        # allow cmock to use the memory comparison assertions for unknown types
-  :when_ptr:  :compare_data        # hint to cmock how to handle pointers in general, the options being :compare_ptr, :compare_data, or :smart
+  :memcmp_if_unknown: true        # allow cmock to use the memory comparison assertions for unknown types
+  :when_ptr: :compare_data        # hint to cmock how to handle pointers in general, the options being :compare_ptr, :compare_data, or :smart
 
   # Mock generation configuration
-  :weak:  ''                       # Symbol to use to declare weak functions
+  :weak: ''                       # Symbol to use to declare weak functions
   :enforce_strict_ordering: true   # Do we want cmock to enforce ordering of all function calls?
   :fail_on_unexpected_calls: true  # Do we want cmock to fail when it encounters a function call that wasn't expected?
   :callback_include_count: true    # Do we want cmock to include the number of calls to this callback, when using callbacks?
@@ -195,7 +195,7 @@
   #:includes_c_post_header:  []
   #:array_size_type:  []            # Specify a type or types that should be used for array lengths
   #:array_size_name:  'size|len'    # Specify a name or names that CMock might automatically recognize as the length of an array
-  :exclude_setjmp_h:  false        # Don't use setjmp when running CMock. Note that this might result in late reporting or out-of-order failures.
+  :exclude_setjmp_h: false        # Don't use setjmp when running CMock. Note that this might result in late reporting or out-of-order failures.
 
 # Configuration options specific to Unity. 
 :unity:
@@ -204,7 +204,7 @@
 
 # You can optionally have ceedling create environment variables for you before
 # performing the rest of its tasks.
-:environment: []
+:environment: [ ]
 # :environment:
 #   # List enforces order allowing later to reference earlier with inline Ruby substitution
 #   - :var1: value
@@ -221,9 +221,9 @@
   :placement: :end
   :flag: "-l${1}"
   :path_flag: "-L ${1}"
-  :system: []    # for example, you might list 'm' to grab the math library
-  :test: []
-  :release: []
+  :system: [ ]    # for example, you might list 'm' to grab the math library
+  :test: [ ]
+  :release: [ ]
 
 ################################################################
 # PLUGIN CONFIGURATION

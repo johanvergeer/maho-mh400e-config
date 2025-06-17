@@ -7,14 +7,18 @@
 
 
 void setUp(void) {
-    lubrication_reset();
 }
 
 void tearDown(void) {
 }
 
 void test_building_pressure_state_does_not_change_when_pressure_is_not_ok() {
-    const LubricationPumpInput input = {
+    LubricationState state = {
+        .state = BUILDING_PRESSURE,
+        .lubricationStartTime = 0.0f,
+        .buildingPressureStartTime = 0.0f
+    };
+    const LubricationSignals input = {
         .isMotionEnabled = true,
         .isPressureOk = false
     };
@@ -26,14 +30,17 @@ void test_building_pressure_state_does_not_change_when_pressure_is_not_ok() {
         .pressureHoldTime = 0
     };
 
-    // First call lubricate to switch state to BUILDING_PRESSURE
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, lubricate( 0.0f, input, config ).state);
-
     // State should still be BUILDING_PRESSURE_WHEN_PRESSURE_IS_NOT_REACHED
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, lubricate( .9f, input, config ).state);
+    lubricate(.9f, input, &state, config);
+    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, state.state);
 }
 
 void test_building_pressure_changes_to_lubricating_when_pressure_is_ok() {
+    LubricationState state = {
+        .state = BUILDING_PRESSURE,
+        .lubricationStartTime = 0.0f,
+        .buildingPressureStartTime = 0.0f
+    };
     const LubricationConfig config = {
         .isEnabled = true,
         .interval = 0,
@@ -41,24 +48,23 @@ void test_building_pressure_changes_to_lubricating_when_pressure_is_ok() {
         .pressureHoldTime = 0
     };
 
-    const LubricationPumpInput input1 = {
-        .isMotionEnabled = true,
-        .isPressureOk = false
-    };
-
-    // First call lubricate to switch state to BUILDING_PRESSURE
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, lubricate( 0.0f, input1, config ).state);
-
-    const LubricationPumpInput input2 = {
+    const LubricationSignals input = {
         .isMotionEnabled = true,
         .isPressureOk = true
     };
 
+    lubricate(1.0f, input, &state, config);
+
     // State should switch to LUBRICATING when pressure is ok
-    TEST_ASSERT_EQUAL(LUBRICATING, lubricate( 1.0f, input2, config ).state);
+    TEST_ASSERT_EQUAL(LUBRICATING, state.state);
 }
 
 void test_building_pressure_changes_to_error_when_pressure_timeout_reached() {
+    LubricationState state = {
+        .state = BUILDING_PRESSURE,
+        .lubricationStartTime = 0.0f,
+        .buildingPressureStartTime = 0.0f
+    };
     const LubricationConfig config = {
         .isEnabled = true,
         .interval = 0,
@@ -66,19 +72,22 @@ void test_building_pressure_changes_to_error_when_pressure_timeout_reached() {
         .pressureHoldTime = 0
     };
 
-    const LubricationPumpInput input = {
+    const LubricationSignals input = {
         .isMotionEnabled = true,
         .isPressureOk = false
     };
 
-    // First call lubricate to switch state to BUILDING_PRESSURE
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, lubricate( 0.1f, input, config ).state);
-
     // State should switch to ERROR when building pressure has timed out
-    TEST_ASSERT_EQUAL(ERROR, lubricate( 1.2f, input, config ).state);
+    lubricate(1.1f, input, &state, config);
+    TEST_ASSERT_EQUAL(ERROR, state.state);
 }
 
 void test_building_pressure_remains_when_pressure_not_reached_yet() {
+    LubricationState state = {
+        .state = BUILDING_PRESSURE,
+        .lubricationStartTime = 0.0f,
+        .buildingPressureStartTime = 0.0f
+    };
     const LubricationConfig config = {
         .isEnabled = true,
         .interval = 0,
@@ -86,14 +95,12 @@ void test_building_pressure_remains_when_pressure_not_reached_yet() {
         .pressureHoldTime = 0
     };
 
-    const LubricationPumpInput input = {
+    const LubricationSignals input = {
         .isMotionEnabled = true,
         .isPressureOk = false
     };
 
-    // First call lubricate to switch state to BUILDING_PRESSURE
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, lubricate( 0.1f, input, config ).state);
-
+    lubricate(1.0f, input, &state, config);
     // State should switch to ERROR when building pressure has timed out
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, lubricate( 1.0f, input, config ).state);
+    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, state.state);
 }

@@ -7,14 +7,18 @@
 
 
 void setUp(void) {
-    lubrication_reset();
 }
 
 void tearDown(void) {
 }
 
 void test_lubrication_logic_motion_disabled(void) {
-    const LubricationPumpInput input = {
+    LubricationState state = {
+        .state = BUILDING_PRESSURE,
+        .lubricationStartTime = 0.0f,
+        .buildingPressureStartTime = 0.0f
+    };
+    const LubricationSignals input = {
         .isMotionEnabled = false,
         .isPressureOk = false
     };
@@ -25,5 +29,6 @@ void test_lubrication_logic_motion_disabled(void) {
         .pressureTimeout = 0,
         .pressureHoldTime = 0
     };
-    TEST_ASSERT_EQUAL(DISABLED, lubricate( 0.0f, input, config ).state);
+    lubricate(0.0f, input, &state, config);
+    TEST_ASSERT_EQUAL(DISABLED, state.state);
 }

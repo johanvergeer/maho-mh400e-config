@@ -15,7 +15,7 @@ typedef enum {
     BUILDING_PRESSURE = 3, /* The lubrication pump is building pressure. */
     LUBRICATING = 4, /* The lubrication pump is actively lubricating. */
     ERROR = 5 /* The lubrication pump is in an error state. */
-} LubricationState;
+} LubricationStates;
 
 /* The configuration parameters for the lubrication pump */
 typedef struct {
@@ -29,19 +29,20 @@ typedef struct {
 typedef struct {
     const bool isMotionEnabled; /* Whether the CNC controller is enabled (false when the e-stop is pressed). */
     const bool isPressureOk; /* Whether the required pressure has been reached. */
-} LubricationPumpInput;
+} LubricationSignals;
 
 /* The output signals from the lubrication pump logic */
 typedef struct {
-    LubricationState state; /* The current lubrication state. */
-} LubricationPumpOutput;
+    LubricationStates state; /* The current lubrication state. */
+    float buildingPressureStartTime;
+    float lubricationStartTime;
+} LubricationState;
 
-LubricationPumpOutput lubricate(
+void lubricate(
     float time,
-    LubricationPumpInput input,
+    LubricationSignals input,
+    LubricationState *state,
     LubricationConfig config
 );
-
-void lubrication_reset(void);
 
 #endif //LUBRICATION_LOGIC_H
