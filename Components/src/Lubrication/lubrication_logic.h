@@ -1,10 +1,11 @@
 //
 // Created by Johan Vergeer on 15/06/2025.
 //
-#include <stdbool.h>
 
 #ifndef LUBRICATION_LOGIC_H
 #define LUBRICATION_LOGIC_H
+
+#include <stdbool.h>
 
 /* The possible states of the lubrication pump */
 typedef enum {
@@ -19,9 +20,9 @@ typedef enum {
 /* The configuration parameters for the lubrication pump */
 typedef struct {
     const bool isEnabled; /* Whether the lubrication pump is enabled. */
-    const int interval; /* The interval between lubrication cycles (in seconds). */
-    const int pressureTimeout; /* The maximum time allowed to build pressure (in seconds). */
-    const int pressureHoldTime; /* The time to keep the pump running after pressure is reached (in seconds). */
+    const float interval; /* The interval between lubrication cycles (in seconds). */
+    const float pressureTimeout; /* The maximum time allowed to build pressure (in seconds). */
+    const float pressureHoldTime; /* The time to keep the pump running after pressure is reached (in seconds). */
 } LubricationConfig;
 
 /* The input signals for the lubrication pump logic */
