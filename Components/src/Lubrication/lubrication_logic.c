@@ -37,6 +37,7 @@ void lubricate(
             start_build_pressure(time, state);
             break;
         case DISABLED:
+        case IDLE:
             if (time - state->buildingPressureStartTime > config.interval) {
                 start_build_pressure(time, state);
                 break;
