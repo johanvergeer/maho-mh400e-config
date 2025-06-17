@@ -57,6 +57,7 @@ void test_building_pressure_changes_to_lubricating_when_pressure_is_ok() {
 
     // State should switch to LUBRICATING when pressure is ok
     TEST_ASSERT_EQUAL(LUBRICATING, state.state);
+    TEST_ASSERT_EQUAL(1.0f, state.lubricationStartTime);
 }
 
 void test_building_pressure_changes_to_error_when_pressure_timeout_reached() {
