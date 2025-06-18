@@ -16,7 +16,6 @@ option singleton yes;
 
 #include <rtapi_math.h>
 #include <stdio.h>
-#include <sys/time.h>
 #include "lubrication_logic.h"
 #include "lubrication_logic.c"
 
@@ -27,15 +26,8 @@ static LubricationState lubrication_state = {
     .lastCycleEndTime = 0.0f
 };
 
-double get_current_time_seconds(void) {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-
-    return tv.tv_sec + tv.tv_usec / 1e6;
-}
-
 FUNCTION(_) {
-    double current_time = get_current_time_seconds();
+    double current_time = rtapi_get_time() / 1000000000.0;
     LubricationSignals signals = {
         .isMotionEnabled = motion_enabled,
         .isPressureOk = pressure
