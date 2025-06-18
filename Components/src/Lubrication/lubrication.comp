@@ -18,6 +18,7 @@ option singleton yes;
 #include <stdio.h>
 #include <sys/time.h>
 #include "lubrication_logic.h"
+#include "lubrication_logic.c"
 
 static LubricationState lubrication_state = {
     .state = LUBRICATION_STATE_INITIALIZING,
