@@ -17,47 +17,47 @@ void lubricate(
     LubricationState *state,
     const LubricationConfig config
 ) {
-    if (state->state == ERROR) {
+    if (state->state == LUBRICATION_STATE_ERROR) {
         // Once the ERROR state is reached a hard reset is required.
         return;
     }
 
     if (config.isEnabled == false || input.isMotionEnabled == false) {
-        state->state = DISABLED;
+        state->state = LUBRICATION_STATE_DISABLED;
         return;
     }
 
     switch (state->state) {
-        case INITIALIZING:
+        case LUBRICATION_STATE_INITIALIZING:
             state->buildingPressureStartTime = time;
             state->lubricationStartTime = time;
-            state->state = BUILDING_PRESSURE;
+            state->state = LUBRICATION_STATE_BUILDING_PRESSURE;
             break;
         // DISABLED and IDLE have the same logic, but they have a different
         // semantic meaning, which is used in the GUI.
-        case DISABLED:
-        case IDLE:
+        case LUBRICATION_STATE_DISABLED:
+        case LUBRICATION_STATE_IDLE:
             if (time - state->lastCycleEndTime > config.interval) {
                 state->buildingPressureStartTime = time;
                 state->lubricationStartTime = time;
-                state->state = BUILDING_PRESSURE;
+                state->state = LUBRICATION_STATE_BUILDING_PRESSURE;
                 break;
             }
-            state->state = IDLE;
+            state->state = LUBRICATION_STATE_IDLE;
             break;
-        case BUILDING_PRESSURE:
+        case LUBRICATION_STATE_BUILDING_PRESSURE:
             if (input.isPressureOk) {
-                state->state = LUBRICATING;
+                state->state = LUBRICATION_STATE_LUBRICATING;
                 state->lubricationStartTime = time;
                 break;
             }
             if (time - state->buildingPressureStartTime > config.pressureTimeout) {
-                state->state = ERROR;
+                state->state = LUBRICATION_STATE_ERROR;
             }
             break;
-        case LUBRICATING:
+        case LUBRICATION_STATE_LUBRICATING:
             if (time - state->lubricationStartTime > config.pressureHoldTime) {
-                state->state = IDLE;
+                state->state = LUBRICATION_STATE_IDLE;
                 state->lastCycleEndTime = time;
             }
             break;

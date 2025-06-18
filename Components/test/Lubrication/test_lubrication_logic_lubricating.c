@@ -14,7 +14,7 @@ void tearDown(void) {
 
 void test_keeps_lubricating_when_pressure_hold_time_has_not_expired(void) {
     LubricationState state = {
-        .state = LUBRICATING,
+        .state = LUBRICATION_STATE_LUBRICATING,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -32,12 +32,12 @@ void test_keeps_lubricating_when_pressure_hold_time_has_not_expired(void) {
 
     lubricate(.9f, input, &state, config);
 
-    TEST_ASSERT_EQUAL(LUBRICATING, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_LUBRICATING, state.state);
 }
 
 void test_lubrication_stops_when_pressure_hold_time_has_expired(void) {
     LubricationState state = {
-        .state = LUBRICATING,
+        .state = LUBRICATION_STATE_LUBRICATING,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -55,5 +55,5 @@ void test_lubrication_stops_when_pressure_hold_time_has_expired(void) {
 
     lubricate(1.1f, input, &state, config);
 
-    TEST_ASSERT_EQUAL(IDLE, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_IDLE, state.state);
 }

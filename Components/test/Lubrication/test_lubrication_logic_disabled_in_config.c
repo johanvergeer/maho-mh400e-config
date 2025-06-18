@@ -14,7 +14,7 @@ void tearDown(void) {
 
 void test_lubrication_logic_disabled(void) {
     LubricationState state = {
-        .state = INITIALIZING,
+        .state = LUBRICATION_STATE_INITIALIZING,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -30,5 +30,5 @@ void test_lubrication_logic_disabled(void) {
         .pressureHoldTime = 0
     };
     lubricate(0.0f, input, &state, config);
-    TEST_ASSERT_EQUAL(DISABLED, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_DISABLED, state.state);
 }

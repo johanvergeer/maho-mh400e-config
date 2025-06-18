@@ -14,7 +14,7 @@ void tearDown(void) {
 
 void test_lubrication_builds_pressure_when_both_enabled(void) {
     LubricationState state = {
-        .state = INITIALIZING,
+        .state = LUBRICATION_STATE_INITIALIZING,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -32,5 +32,5 @@ void test_lubrication_builds_pressure_when_both_enabled(void) {
 
     lubricate(0.0f, input, &state, config);
 
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_BUILDING_PRESSURE, state.state);
 }

@@ -20,7 +20,7 @@ option singleton yes;
 #include "lubrication_logic.h"
 
 static LubricationState lubrication_state = {
-    .state = INITIALIZING,
+    .state = LUBRICATION_STATE_INITIALIZING,
     .buildingPressureStartTime = 0.0f,
     .lubricationStartTime = 0.0f,
     .lastCycleEndTime = 0.0f
@@ -55,6 +55,6 @@ FUNCTION(_) {
 
     // Set the output pins
     current_state = lubrication_state.state;
-    enable = (lubrication_state.state == BUILDING_PRESSURE ||
-              lubrication_state.state == LUBRICATING);
+    enable = (lubrication_state.state == LUBRICATION_STATE_BUILDING_PRESSURE ||
+              lubrication_state.state == LUBRICATION_STATE_LUBRICATING);
 }

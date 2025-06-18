@@ -14,7 +14,7 @@ void tearDown(void) {
 
 void test_remains_idle_when_previous_cycle_was_done_within_interval() {
     LubricationState state = {
-        .state = IDLE,
+        .state = LUBRICATION_STATE_IDLE,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -31,13 +31,13 @@ void test_remains_idle_when_previous_cycle_was_done_within_interval() {
     };
 
     lubricate(.9f, input, &state, config);
-    TEST_ASSERT_EQUAL(IDLE, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_IDLE, state.state);
 }
 
 
 void test_to_building_pressure_when_previous_cycle_was_too_long_ago() {
     LubricationState state = {
-        .state = IDLE,
+        .state = LUBRICATION_STATE_IDLE,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -54,5 +54,5 @@ void test_to_building_pressure_when_previous_cycle_was_too_long_ago() {
     };
 
     lubricate(1.1f, input, &state, config);
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_BUILDING_PRESSURE, state.state);
 }

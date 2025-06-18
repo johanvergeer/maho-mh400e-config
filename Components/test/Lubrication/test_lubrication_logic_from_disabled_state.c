@@ -15,7 +15,7 @@ void tearDown(void) {
 
 void test_to_remains_disabled_when_motion_is_disabled() {
     LubricationState state = {
-        .state = DISABLED,
+        .state = LUBRICATION_STATE_DISABLED,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -32,13 +32,13 @@ void test_to_remains_disabled_when_motion_is_disabled() {
     };
 
     lubricate(.9f, input, &state, config);
-    TEST_ASSERT_EQUAL(DISABLED, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_DISABLED, state.state);
 }
 
 
 void test_to_remains_disabled_when_disabled_in_config() {
     LubricationState state = {
-        .state = DISABLED,
+        .state = LUBRICATION_STATE_DISABLED,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -55,12 +55,12 @@ void test_to_remains_disabled_when_disabled_in_config() {
     };
 
     lubricate(.9f, input, &state, config);
-    TEST_ASSERT_EQUAL(DISABLED, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_DISABLED, state.state);
 }
 
 void test_to_idle_when_previous_cycle_was_done_within_interval() {
     LubricationState state = {
-        .state = DISABLED,
+        .state = LUBRICATION_STATE_DISABLED,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -77,13 +77,13 @@ void test_to_idle_when_previous_cycle_was_done_within_interval() {
     };
 
     lubricate(.9f, input, &state, config);
-    TEST_ASSERT_EQUAL(IDLE, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_IDLE, state.state);
 }
 
 
 void test_to_building_pressure_when_previous_cycle_was_too_long_ago() {
     LubricationState state = {
-        .state = DISABLED,
+        .state = LUBRICATION_STATE_DISABLED,
         .lubricationStartTime = 0.0f,
         .buildingPressureStartTime = 0.0f
     };
@@ -100,5 +100,5 @@ void test_to_building_pressure_when_previous_cycle_was_too_long_ago() {
     };
 
     lubricate(1.1f, input, &state, config);
-    TEST_ASSERT_EQUAL(BUILDING_PRESSURE, state.state);
+    TEST_ASSERT_EQUAL(LUBRICATION_STATE_BUILDING_PRESSURE, state.state);
 }

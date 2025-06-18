@@ -9,12 +9,12 @@
 
 /* The possible states of the lubrication pump */
 typedef enum {
-    INITIALIZING = 0, /* The initial state before the first lubrication cycle starts. */
-    DISABLED = 1, /* The lubrication pump is disabled. */
-    IDLE = 2, /* The lubrication pump is idle. */
-    BUILDING_PRESSURE = 3, /* The lubrication pump is building pressure. */
-    LUBRICATING = 4, /* The lubrication pump is actively lubricating. */
-    ERROR = 5 /* The lubrication pump is in an error state. */
+    LUBRICATION_STATE_INITIALIZING = 0, /* The initial state before the first lubrication cycle starts. */
+    LUBRICATION_STATE_DISABLED = 1, /* The lubrication pump is disabled. */
+    LUBRICATION_STATE_IDLE = 2, /* The lubrication pump is idle. */
+    LUBRICATION_STATE_BUILDING_PRESSURE = 3, /* The lubrication pump is building pressure. */
+    LUBRICATION_STATE_LUBRICATING = 4, /* The lubrication pump is actively lubricating. */
+    LUBRICATION_STATE_ERROR = 5 /* The lubrication pump is in an error state. */
 } LubricationStates;
 
 /* The configuration parameters for the lubrication pump */
