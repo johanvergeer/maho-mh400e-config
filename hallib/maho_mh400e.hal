@@ -11,11 +11,15 @@ loadrt hm2_eth board_ip=192.168.1.121 config="num_encoders=3 sserial_port_0=3000
 # base_period = stepgen timing; servo_period = PID/control loop timing
 loadrt motmod base_period_nsec=100000 servo_period_nsec=1000000
 
+# Load the lubrication component
+loadrt lubrication
+
 # Add required functions to the servo thread in correct execution order
 addf hm2_7i94.0.read servo-thread                       # Read hardware inputs (encoders, smart-serial, etc.)
 addf motion-command-handler servo-thread                # Handle interpreter commands (e.g. G-code moves)
 addf motion-controller servo-thread                     # PID control and trajectory generation
 addf hm2_7i94.0.write servo-thread                      # Write outputs to hardware (DACs, stepgens, GPIO, etc.)
+addf lubrication servo-thread                           # Handle the lubrication pump
 
 # Connect encoder.00 to X-axis (joint 0)
 # Negative scale reverses the encoder direction
@@ -38,6 +42,11 @@ net z-pos-fb => joint.2.motor-pos-fb
 
 # Create a signal with a human-readable name for relay 19K1 (CNC ready signal output)
 net cnc-ready hm2_7i94.0.7i84.0.3.output-00
+
+# Connect lubrication logic
+net motion-enabled => lubrication.motion-enabled <= motion.motion-enabled
+net pressure-ok => lubrication.pressure <= hm2_7i94.0.7i84.0.3.input-07
+net lubrication-enable => lubrication.enable => hm2_7i94.0.7i84.0.3.output-01
 
 # Set the cnc-ready signal to TRUE unconditionally (Maho expects this from the CNC control)
 sets cnc-ready true
