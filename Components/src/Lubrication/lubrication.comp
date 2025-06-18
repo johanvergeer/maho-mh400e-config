@@ -2,13 +2,59 @@ component lubrication "Maho MH400E lubrication";
 author "Johan Vergeer";
 license "GPL";
 
-pin in float in;
-pin out float out;
+pin in bit motion_enabled           "Is motion enabled in the GUI?";
+pin in bit pressure                 "Is the target pressure reached?";
+
+pin out bit enable                  "Should the lubrication pump be enabled?";
+pin out int state                   "The current lubrication state";
 
 function _;
+
+option singleton yes;
+
 ;;
 
 #include <rtapi_math.h>
-#include "lubrication_logic.c"
+#include <stdio.h>
+#include <sys/time.h>
+#include "lubrication_logic.h"
 
-FUNCTION(_) {}
+static LubricationState lubrication_state = {
+    .state = LubricationStates.INITIALIZING,
+    .buildingPressureStartTime = 0.0f,
+    .lubricationStartTime = 0.0f,
+    .lastCycleEndTime = 0.0f
+};
+
+double get_current_time_seconds(void) {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+
+    return tv.tv_sec + tv.tv_usec / 1e6;
+}
+
+FUNCTION(_) {
+    double current_time = get_current_time_seconds();
+    LubricationSignals signals{
+        .isMotionEnabled = motion_enabled,
+        .isPressureOk = pressure
+    };
+    LubricationConfig config = {
+        .isEnabled=1,
+        .interval=16.0f*60.0f,
+        .pressureTimeout=60.0f,
+        .pressureHoldTime=15.0f
+    };
+
+    lubricate(
+        current_time,
+        signals,
+        &lubrication_state,
+        config
+    );
+
+    // Set the output pins
+    state = lubrication_state.state;
+    enable = (lubrication_state.state == LubricationStates.BUILDING_PRESSURE ||
+              lubrication_state.state == LubricationStates.LUBRICATING);
+}

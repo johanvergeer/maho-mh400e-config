@@ -34,9 +34,9 @@ typedef struct {
 /* The output signals from the lubrication pump logic */
 typedef struct {
     LubricationStates state; /* The current lubrication state. */
-    float buildingPressureStartTime;
-    float lubricationStartTime;
-    float lastCycleEndTime;
+    double buildingPressureStartTime;
+    double lubricationStartTime;
+    double lastCycleEndTime;
 } LubricationState;
 
 void lubricate(
