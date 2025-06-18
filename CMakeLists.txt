@@ -6,7 +6,6 @@ set(CMAKE_C_STANDARD 11)
 set(LUBRICATION_COMP ./Components/src/Lubrication)
 set(CALCULATE_COMP ./Components/src/Calculate)
 
-# Voeg de include directories toe zodat CLion de headers kan vinden
 include_directories(${LUBRICATION_COMP})
 include_directories(${CALCULATE_COMP})
 
@@ -19,26 +18,15 @@ if (CMAKE_BUILD_TYPE STREQUAL "Test")
     set(LUBRICATION_TESTS ./Components/test/Lubrication)
     include_directories(${LUBRICATION_TESTS})
 
-    set(
-        TEST_FILES
-        ${LUBRICATION_TESTS}/test_lubrication_logic_building_pressure.c
-        ${LUBRICATION_TESTS}/test_lubrication_logic_disabled_in_config.c
-        ${LUBRICATION_TESTS}/test_lubrication_logic_from_disabled_state.c
-        ${LUBRICATION_TESTS}/test_lubrication_logic_from_idle_state.c
-        ${LUBRICATION_TESTS}/test_lubrication_logic_initializing.c
-        ${LUBRICATION_TESTS}/test_lubrication_logic_lubricating.c
-        ${LUBRICATION_TESTS}/test_lubrication_logic_motion_disabled.c
-    )
+    file(GLOB TEST_FILES "${LUBRICATION_TESTS}/*.c")
 endif ()
 
-# Verzamel alle C-bestanden (dit is puur zodat CLion weet wat er is)
 set(
     SOURCE_FILES
     ${LUBRICATION_COMP}/lubrication_logic.c
     ${CALCULATE_COMP}/calculate_logic.c
 )
 
-# Maak een dummy executable (je hoeft dit niet echt te bouwen)
 if (CMAKE_BUILD_TYPE STREQUAL "Test")
     add_executable(dummy ${SOURCE_FILES} ${TEST_FILES})
 else ()
