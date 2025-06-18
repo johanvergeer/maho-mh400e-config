@@ -15,23 +15,27 @@ Note:
 
 # To get this running
 
+## Nox
+
+This project uses [Nox](https://nox.thea.codes/en/stable/) to run builds and tests.
+
+Follow the steps on their website to install Nox.
+
 ## CLion
 
 - Step 1: Install [Ceedling](https://www.throwtheswitch.org/ceedling#get-ceedling-section)
-- Step 2: Run Ceedling build. This is 
+- Step 2: Run the `test_build` nox command to build the artifacts required for CLion.
 
 ```shell
-$ cd Components
-$ ceedling build
+$ nox -s build_test
 ```
 
 - Step 3: Open CLion using the CMake configuration
 
 ## To run the tests
 
-Run the tests from the Components directory once Ceedling is installed.
+Run the tests using Nox directory once Ceedling is installed.
 
 ```shell
-$ cd Components
-$ ceedling test
+$ nox -s test
 ```

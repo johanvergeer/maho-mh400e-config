@@ -13,3 +13,4 @@ __compile_commands.json
 cmake-build-debug
 Components/build
 cmake-build-*
+.nox
