@@ -10,7 +10,10 @@ pin out u32 current_state           "The current lubrication state";
 
 option rtapi_args;
 
-param rw bit is_enabled = 1             "Whether or not the lubrication logic should be enabled";
+param rw bit is_enabled = 1                       "Whether or not the lubrication logic should be enabled";
+param rw float lubrication_interval = 16.0f       "The interval in minutes between lubrication cycles";
+param rw float pressure_timeout = 60.0f           "The pressure timeout in seconds";
+param rw float pressure_hold_time = 15.0f         "The time in seconds the lubrication pump keeps running after pressure buildup";
 
 function _;
 
@@ -38,9 +41,9 @@ FUNCTION(_) {
     };
     LubricationConfig config = {
         .isEnabled=is_enabled,
-        .interval=16.0f*60.0f,
-        .pressureTimeout=60.0f,
-        .pressureHoldTime=15.0f
+        .interval=lubrication_interval*60.0f,
+        .pressureTimeout=pressure_timeout,
+        .pressureHoldTime=pressure_hold_time
     };
 
     lubricate(
