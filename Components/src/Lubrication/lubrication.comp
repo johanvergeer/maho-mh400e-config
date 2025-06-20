@@ -6,7 +6,11 @@ pin in bit motion_enabled           "Is motion enabled in the GUI?";
 pin in bit pressure                 "Is the target pressure reached?";
 
 pin out bit enable                  "Should the lubrication pump be enabled?";
-pin out u32 current_state                   "The current lubrication state";
+pin out u32 current_state           "The current lubrication state";
+
+option rtapi_args;
+
+param rw bit is_enabled = 1             "Whether or not the lubrication logic should be enabled";
 
 function _;
 
@@ -33,7 +37,7 @@ FUNCTION(_) {
         .isPressureOk = pressure
     };
     LubricationConfig config = {
-        .isEnabled=1,
+        .isEnabled=is_enabled,
         .interval=16.0f*60.0f,
         .pressureTimeout=60.0f,
         .pressureHoldTime=15.0f
