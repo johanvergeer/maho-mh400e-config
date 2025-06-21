@@ -1,0 +1,14 @@
+[general]
+# Path to extra gitlint rules
+extra-path=tools/gitlint/rules
+
+# Whether to use Python `search` instead of `match` semantics in rules that use
+# regexes. Context: https://github.com/jorisroovers/gitlint/issues/254
+# Disabled by default, but will be enabled by default in the future.
+regex-style-search=true
+
+[title-max-length]
+line-length=50
+
+[body-max-line-length]
+line-length=72
