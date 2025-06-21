@@ -19,7 +19,19 @@ This repository contains the LinuxCNC 2.9 configuration for a retrofitted Maho C
 
 - [Nox](https://nox.thea.codes/en/stable/) for builds and tests
 - [Ceedling](https://www.throwtheswitch.org/ceedling#get-ceedling-section) for the test framework
+- [gitlint](https://jorisroovers.com/gitlint/latest/) for linting git commit messages
 - (Optional) **CLion** for development with CMake integration
+
+
+### Git commit guidelines
+
+This project uses **gitlint** to enforce clean and consistent commit messages.  
+Make sure gitlint is installed and used before committing changes:
+
+```shell
+pipx install gitlint
+gitlint install-hook
+```
 
 ### Build for CLion
 
