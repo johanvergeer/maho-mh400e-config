@@ -1,7 +1,3 @@
-//
-// Created by Johan Vergeer on 15/06/2025.
-//
-
 #ifndef LUBRICATION_LOGIC_H
 #define LUBRICATION_LOGIC_H
 

@@ -1,6 +1,3 @@
-//
-// Created by Johan Vergeer on 15/06/2025.
-//
 #include "unity.h"
 #include "lubrication_logic.h"
 #include <stdbool.h>
