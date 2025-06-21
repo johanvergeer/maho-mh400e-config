@@ -14,6 +14,11 @@ loadrt motmod base_period_nsec=100000 servo_period_nsec=1000000
 # Load the lubrication component
 loadrt lubrication
 
+setp lubrication.is-enabled [LUBRICATION]ENABLED
+setp lubrication.lubrication-interval [LUBRICATION]INTERVAL_CONSECUTIVE_MOVEMENT
+setp lubrication.pressure-timeout [LUBRICATION]PRESSURE_TIMEOUT
+setp lubrication.pressure-hold-time [LUBRICATION]PRESSURE_HOLD_TIME
+
 # Add required functions to the servo thread in correct execution order
 addf hm2_7i94.0.read servo-thread                       # Read hardware inputs (encoders, smart-serial, etc.)
 addf motion-command-handler servo-thread                # Handle interpreter commands (e.g. G-code moves)
