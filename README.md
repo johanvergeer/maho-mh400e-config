@@ -29,8 +29,7 @@ This project uses **gitlint** to enforce clean and consistent commit messages.
 Make sure gitlint is installed and used before committing changes:
 
 ```shell
-pipx install gitlint
-gitlint install-hook
+nox -s setup_gitlint
 ```
 
 ### Build for CLion

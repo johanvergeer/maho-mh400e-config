@@ -3,6 +3,8 @@ import shutil
 
 import nox
 
+EN_CORE_WEB_SM_VERSION = "3.8.0"
+
 
 @nox.session
 def build_test(session: nox.Session) -> None:
@@ -59,9 +61,24 @@ def test(session: nox.Session) -> None:
     session.chdir("Components")
     session.run("ceedling", "test", external=True)
 
+
 @nox.session
 def install_components(session: nox.Session) -> None:
     """Install all linuxcnc components"""
     session.run("sudo", "halcompile", "--install", "Components/src/Lubrication/lubrication.comp", external=True)
     session.run("sudo", "halcompile", "--install-doc", "Components/src/Lubrication/lubrication.comp", external=True)
 
+
+@nox.session
+def setup_gitlint(session):
+    """Install gitlint + spacy + model via pipx."""
+    session.run("pipx", "install", "gitlint", external=True)
+    session.run("pipx", "inject", "gitlint", "spacy", external=True)
+    session.run(
+        "pipx",
+        "inject",
+        "gitlint",
+        f"https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-{EN_CORE_WEB_SM_VERSION}/en_core_web_sm-{EN_CORE_WEB_SM_VERSION}-py3-none-any.whl",
+        external=True
+    )
+    session.run("gitlint", "install-hook", external=True)
