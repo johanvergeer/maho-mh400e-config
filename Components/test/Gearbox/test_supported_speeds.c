@@ -1,13 +1,11 @@
-#include "unity.h"
 #include "supported_speeds.h"
+#include "unity.h"
+
 #include <stdbool.h>
 
+void setUp(void) {}
 
-void setUp(void) {
-}
-
-void tearDown(void) {
-}
+void tearDown(void) {}
 
 void test_supported_speeds_count(void) {
     TEST_ASSERT_EQUAL(19, SUPPORTED_SPEEDS_COUNT);
@@ -27,4 +25,10 @@ void test_get_bitmask_from_rpm_returns_0_when_bitmask_not_found(void) {
 
 void test_get_bitmask_from_rpm_returns_bitmask_when_found(void) {
     TEST_ASSERT_EQUAL(1097, get_bitmask_from_rpm(80));
+}
+
+void test_create_bitmask_from_gearbox_state(void) {
+    GearboxMicroSwitchState state = {0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1};
+
+    TEST_ASSERT_EQUAL(1097, create_bitmask_from_gearbox_state(state));
 }

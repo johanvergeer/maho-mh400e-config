@@ -1,11 +1,27 @@
 #ifndef GEARS_H
 #define GEARS_H
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct {
     unsigned rpm;
     unsigned bitmask;
 } SupportedSpeed;
+
+typedef struct {
+    bool input_left_center;
+    bool input_center;
+    bool input_right;
+    bool input_left;
+    bool middle_left_center;
+    bool middle_center;
+    bool middle_right;
+    bool middle_left;
+    bool reducer_left_center;
+    bool reducer_center;
+    bool reducer_right;
+    bool reducer_left;
+} GearboxMicroSwitchState;
 
 /**
  * Defines an array of supported speed configurations, where each configuration maps a specific
@@ -44,5 +60,12 @@ unsigned get_bitmask_from_rpm(unsigned rpm);
  * @return The RPM value corresponding to the given bitmask, or 0 if no match is found.
  */
 unsigned get_rpm_from_bitmask(unsigned bitmask);
+
+/**
+ *
+ * @param state The current state of the gearbox micro switches
+ * @return The bitmask of the current gearbox micro switches state
+ */
+unsigned create_bitmask_from_gearbox_state(GearboxMicroSwitchState state);
 
 #endif // GEARS_H

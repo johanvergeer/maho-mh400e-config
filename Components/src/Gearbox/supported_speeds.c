@@ -45,3 +45,20 @@ unsigned get_rpm_from_bitmask(const unsigned bitmask) {
     }
     return 0;
 }
+
+unsigned create_bitmask_from_gearbox_state(const GearboxMicroSwitchState state) {
+    unsigned bitmask = 0;
+    bitmask |= (state.input_left_center << 11);
+    bitmask |= (state.input_center << 10);
+    bitmask |= (state.input_right << 9);
+    bitmask |= (state.input_left << 8);
+    bitmask |= (state.middle_left_center << 7);
+    bitmask |= (state.middle_center << 6);
+    bitmask |= (state.middle_right << 5);
+    bitmask |= (state.middle_left << 4);
+    bitmask |= (state.reducer_left_center << 3);
+    bitmask |= (state.reducer_center << 2);
+    bitmask |= (state.reducer_right << 1);
+    bitmask |= state.reducer_left;
+    return bitmask;
+}
