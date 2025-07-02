@@ -97,8 +97,8 @@ def lint(session):
 @nox.session
 def format(session):
     """Format all C and header files with clang-format."""
-    c_files = glob.glob("Components/src/**/*.c", recursive=True)
-    h_files = glob.glob("Components/src/**/*.h", recursive=True)
+    c_files = glob.glob("Components/**/*.c", recursive=True)
+    h_files = glob.glob("Components/**/*.h", recursive=True)
     files = c_files + h_files
 
     if not files:

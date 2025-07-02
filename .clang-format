@@ -28,3 +28,4 @@ InsertTrailingCommas: None
 ColumnLimit: 100
 
 BinPackParameters: OnePerLine
+RemoveEmptyLinesInUnwrappedLines: true
