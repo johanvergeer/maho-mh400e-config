@@ -23,43 +23,43 @@ void lubricate(
         return;
     }
 
-    if (config.isEnabled == false || input.isMotionEnabled == false) {
+    if (config.is_enabled == false || input.is_motion_enabled == false) {
         state->state = LUBRICATION_STATE_DISABLED;
         return;
     }
 
     switch (state->state) {
         case LUBRICATION_STATE_INITIALIZING:
-            state->buildingPressureStartTime = time;
-            state->lubricationStartTime = time;
+            state->building_pressure_start_time = time;
+            state->lubrication_start_time = time;
             state->state = LUBRICATION_STATE_BUILDING_PRESSURE;
             break;
         // DISABLED and IDLE have the same logic, but they have a different
         // semantic meaning, which is used in the GUI.
         case LUBRICATION_STATE_DISABLED:
         case LUBRICATION_STATE_IDLE:
-            if (time - state->lastCycleEndTime > config.interval) {
-                state->buildingPressureStartTime = time;
-                state->lubricationStartTime = time;
+            if (time - state->last_cycle_end_time > config.interval) {
+                state->building_pressure_start_time = time;
+                state->lubrication_start_time = time;
                 state->state = LUBRICATION_STATE_BUILDING_PRESSURE;
                 break;
             }
             state->state = LUBRICATION_STATE_IDLE;
             break;
         case LUBRICATION_STATE_BUILDING_PRESSURE:
-            if (input.isPressureOk) {
+            if (input.is_pressure_ok) {
                 state->state = LUBRICATION_STATE_LUBRICATING;
-                state->lubricationStartTime = time;
+                state->lubrication_start_time = time;
                 break;
             }
-            if (time - state->buildingPressureStartTime > config.pressureTimeout) {
+            if (time - state->building_pressure_start_time > config.pressure_timeout) {
                 state->state = LUBRICATION_STATE_ERROR;
             }
             break;
         case LUBRICATION_STATE_LUBRICATING:
-            if (time - state->lubricationStartTime > config.pressureHoldTime) {
+            if (time - state->lubrication_start_time > config.pressure_hold_time) {
                 state->state = LUBRICATION_STATE_IDLE;
-                state->lastCycleEndTime = time;
+                state->last_cycle_end_time = time;
             }
             break;
         default:

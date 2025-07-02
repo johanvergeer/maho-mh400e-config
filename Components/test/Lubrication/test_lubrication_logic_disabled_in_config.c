@@ -12,19 +12,19 @@ void tearDown(void) {
 void test_lubrication_logic_disabled(void) {
     LubricationState state = {
         .state = LUBRICATION_STATE_INITIALIZING,
-        .lubricationStartTime = 0.0f,
-        .buildingPressureStartTime = 0.0f
+        .lubrication_start_time = 0.0f,
+        .building_pressure_start_time = 0.0f
     };
     const LubricationSignals input = {
-        .isMotionEnabled = true,
-        .isPressureOk = false
+        .is_motion_enabled = true,
+        .is_pressure_ok = false
     };
 
     const LubricationConfig config = {
-        .isEnabled = false,
+        .is_enabled = false,
         .interval = 0,
-        .pressureTimeout = 0,
-        .pressureHoldTime = 0
+        .pressure_timeout = 0,
+        .pressure_hold_time = 0
     };
     lubricate(0.0f, input, &state, config);
     TEST_ASSERT_EQUAL(LUBRICATION_STATE_DISABLED, state.state);

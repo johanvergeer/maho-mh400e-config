@@ -12,19 +12,19 @@ void tearDown(void) {
 void test_remains_idle_when_previous_cycle_was_done_within_interval() {
     LubricationState state = {
         .state = LUBRICATION_STATE_IDLE,
-        .lubricationStartTime = 0.0f,
-        .buildingPressureStartTime = 0.0f
+        .lubrication_start_time = 0.0f,
+        .building_pressure_start_time = 0.0f
     };
     const LubricationSignals input = {
-        .isMotionEnabled = true,
-        .isPressureOk = false
+        .is_motion_enabled = true,
+        .is_pressure_ok = false
     };
 
     const LubricationConfig config = {
-        .isEnabled = true,
+        .is_enabled = true,
         .interval = 1,
-        .pressureTimeout = 1.0f,
-        .pressureHoldTime = 0
+        .pressure_timeout = 1.0f,
+        .pressure_hold_time = 0
     };
 
     lubricate(.9f, input, &state, config);
@@ -35,19 +35,19 @@ void test_remains_idle_when_previous_cycle_was_done_within_interval() {
 void test_to_building_pressure_when_previous_cycle_was_too_long_ago() {
     LubricationState state = {
         .state = LUBRICATION_STATE_IDLE,
-        .lubricationStartTime = 0.0f,
-        .buildingPressureStartTime = 0.0f
+        .lubrication_start_time = 0.0f,
+        .building_pressure_start_time = 0.0f
     };
     const LubricationSignals input = {
-        .isMotionEnabled = true,
-        .isPressureOk = false
+        .is_motion_enabled = true,
+        .is_pressure_ok = false
     };
 
     const LubricationConfig config = {
-        .isEnabled = true,
+        .is_enabled = true,
         .interval = 1,
-        .pressureTimeout = 1.0f,
-        .pressureHoldTime = 0
+        .pressure_timeout = 1.0f,
+        .pressure_hold_time = 0
     };
 
     lubricate(1.1f, input, &state, config);

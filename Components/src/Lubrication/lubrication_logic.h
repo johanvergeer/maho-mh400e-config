@@ -16,27 +16,27 @@ typedef enum {
 
 /* The configuration parameters for the lubrication pump */
 typedef struct {
-    const bool isEnabled;         /* Whether the lubrication pump is enabled. */
-    const float interval;         /* The interval between lubrication cycles (in seconds). */
-    const float pressureTimeout;  /* The maximum time allowed to build pressure (in
-                                     seconds). */
-    const float pressureHoldTime; /* The time to keep the pump running after
+    const bool is_enabled;          /* Whether the lubrication pump is enabled. */
+    const float interval;           /* The interval between lubrication cycles (in seconds). */
+    const float pressure_timeout;   /* The maximum time allowed to build pressure (in
+                                      seconds). */
+    const float pressure_hold_time; /* The time to keep the pump running after
                                      pressure is reached (in seconds). */
 } LubricationConfig;
 
 /* The input signals for the lubrication pump logic */
 typedef struct {
-    const bool isMotionEnabled; /* Whether the CNC controller is enabled (false
+    const bool is_motion_enabled; /* Whether the CNC controller is enabled (false
                                    when the e-stop is pressed). */
-    const bool isPressureOk;    /* Whether the required pressure has been reached. */
+    const bool is_pressure_ok;    /* Whether the required pressure has been reached. */
 } LubricationSignals;
 
 /* The output signals from the lubrication pump logic */
 typedef struct {
     LubricationStates state; /* The current lubrication state. */
-    double buildingPressureStartTime;
-    double lubricationStartTime;
-    double lastCycleEndTime;
+    double building_pressure_start_time;
+    double lubrication_start_time;
+    double last_cycle_end_time;
 } LubricationState;
 
 void lubricate(

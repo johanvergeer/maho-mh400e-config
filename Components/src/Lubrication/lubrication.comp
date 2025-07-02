@@ -28,22 +28,22 @@ option singleton yes;
 
 static LubricationState lubrication_state = {
     .state = LUBRICATION_STATE_INITIALIZING,
-    .buildingPressureStartTime = 0.0f,
-    .lubricationStartTime = 0.0f,
-    .lastCycleEndTime = 0.0f
+    .building_pressure_start_time = 0.0f,
+    .lubrication_start_time = 0.0f,
+    .last_cycle_end_time = 0.0f
 };
 
 FUNCTION(_) {
     double current_time = rtapi_get_time() / 1000000000.0;
     LubricationSignals signals = {
-        .isMotionEnabled = motion_enabled,
-        .isPressureOk = pressure
+        .is_motion_enabled = motion_enabled,
+        .is_pressure_ok = pressure
     };
     LubricationConfig config = {
-        .isEnabled=is_enabled,
+        .is_enabled=is_enabled,
         .interval=lubrication_interval*60.0f,
-        .pressureTimeout=pressure_timeout,
-        .pressureHoldTime=pressure_hold_time
+        .pressure_timeout=pressure_timeout,
+        .pressure_hold_time=pressure_hold_time
     };
 
     lubricate(
