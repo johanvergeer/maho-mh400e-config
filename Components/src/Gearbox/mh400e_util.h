@@ -66,9 +66,4 @@ static void sort_array_by_key(pair_t array[], size_t length);
  */
 static pair_t *select_gear_from_rpm(tree_node_t *tree, float rpm);
 
-/* really ugly way of keeping more order and splitting the sources,
- * halcompile does not allow to link multipe source files together, so
- * ultimately all sources need to be included by the .comp directly */
-#include <mh400e_util.c>
-
 #endif //__MH400E_UTIL_H__

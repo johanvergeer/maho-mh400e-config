@@ -37,9 +37,4 @@ static void gearbox_handle_estop(void);
 /* Returns true if a gear shifting operation is currently in progress */
 static bool gearshift_in_progress(void);
 
-/* really ugly way of keeping more order and splitting the sources,
- * halcompile does not allow to link multipe source files together, so
- * ultimately all sources need to be included by the .comp directly */
-#include "mh400e_gears.c"
-
 #endif //__MH400E_GEARS_H__

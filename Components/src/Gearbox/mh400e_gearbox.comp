@@ -52,7 +52,10 @@ option singleton yes;
 
 #include "mh400e_common.h"
 #include "mh400e_util.h"
+#include "mh400e_util.c"
 #include "mh400e_gears.h"
+#include "mh400e_gears.c"
+#include "mh400e_twitch.c"
 
 static float g_last_spindle_speed = 0;
 

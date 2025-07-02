@@ -28,9 +28,4 @@ static void twitch_stop(long period);
 /* Returns true if stop twitching operation completed. */
 static bool twitch_stop_completed(void);
 
-/* really ugly way of keeping more order and splitting the sources,
- * halcompile does not allow to link multipe source files together, so
- * ultimately all sources need to be included by the .comp directly */
-#include "mh400e_twitch.c"
-
 #endif //__MH400E_TWITCH_H__
