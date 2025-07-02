@@ -1,0 +1,30 @@
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: Latest
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+AllowShortIfStatementsOnASingleLine: false
+BreakBeforeBraces: Attach
+IndentCaseLabels: true
+
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+
+AlignAfterOpenBracket: BlockIndent
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true
+
+BreakAfterReturnType: ExceptShortType
+AllowShortFunctionsOnASingleLine: Empty
+
+SortIncludes: CaseInsensitive
+IncludeBlocks: Regroup
+
+InsertTrailingCommas: None
+ColumnLimit: 100
+
+BinPackParameters: OnePerLine

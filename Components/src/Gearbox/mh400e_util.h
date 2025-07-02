@@ -11,8 +11,7 @@ functions directly in the header files.
 #include <rtapi.h>
 
 /* Binary search tree node. */
-typedef struct tree_node
-{
+typedef struct tree_node {
     unsigned key;
     unsigned value;
     struct tree_node *left;
@@ -42,8 +41,7 @@ static tree_node_t *tree_from_sorted_array(pair_t *array, size_t length);
  * If no exact match of the key was found, return the closest available.
  * This is useful when we get spindle rpm values as user in put, but
  * need to quantize them to the speeds supported by the machine. */
-static tree_node_t *tree_search_closest_match(tree_node_t *root,
-                                              unsigned key);
+static tree_node_t *tree_search_closest_match(tree_node_t *root, unsigned key);
 
 /* Return tree node by the given key, if there is no exact match (i.e.
  * key not found), return NULL. */
@@ -73,4 +71,4 @@ static pair_t *select_gear_from_rpm(tree_node_t *tree, float rpm);
  * ultimately all sources need to be included by the .comp directly */
 #include <mh400e_util.c>
 
-#endif//__MH400E_UTIL_H__
+#endif //__MH400E_UTIL_H__

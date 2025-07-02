@@ -1,9 +1,10 @@
-#include <stdbool.h>
 #include "lubrication_logic.h"
 
+#include <stdbool.h>
 
 /**
- * @brief Determine the next state of the lubrication pump based on time and input.
+ * @brief Determine the next state of the lubrication pump based on time and
+ * input.
  *
  * @param time The current time in seconds.
  * @param input The input signals for the lubrication pump.

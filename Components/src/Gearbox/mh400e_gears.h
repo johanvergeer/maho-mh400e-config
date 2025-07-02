@@ -5,7 +5,7 @@
 
 #include "mh400e_common.h"
 
-/* One time setup function to prepare data structures related to gearbox 
+/* One time setup function to prepare data structures related to gearbox
  * switching*/
 FUNCTION(gearbox_setup);
 
@@ -16,11 +16,11 @@ static void update_current_pingroup_masks(void);
 /* Combine masks from each pin group to a value representing the current
  * gear setting. A return of NULL means that a corresponding value could
  * not be found, which may indicate a gearshift being in progress- */
-static pair_t* get_current_gear(tree_node_t *tree);
+static pair_t *get_current_gear(tree_node_t *tree);
 
 /* Start gear shifting, parameter specifies the target gear that we want
  * to shift to.
- * ATTENTION: this function will set the vlaue of the start_gear_shift pin 
+ * ATTENTION: this function will set the vlaue of the start_gear_shift pin
  * and also start twitching. */
 static void gearshift_start(pair_t *target_gear, long period);
 
@@ -42,4 +42,4 @@ static bool gearshift_in_progress(void);
  * ultimately all sources need to be included by the .comp directly */
 #include "mh400e_gears.c"
 
-#endif//__MH400E_GEARS_H__
+#endif //__MH400E_GEARS_H__

@@ -3,9 +3,9 @@
 #ifndef __MH400E_TWITCH_H__
 #define __MH400E_TWITCH_H__
 
-#include <rtapi.h>
-
 #include "mh400e_common.h"
+
+#include <rtapi.h>
 
 /* Call only once, sets up the global twitch state data structure */
 FUNCTION(twitch_setup);
@@ -33,4 +33,4 @@ static bool twitch_stop_completed(void);
  * ultimately all sources need to be included by the .comp directly */
 #include "mh400e_twitch.c"
 
-#endif//__MH400E_TWITCH_H__
+#endif //__MH400E_TWITCH_H__

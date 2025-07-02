@@ -1,5 +1,6 @@
 import pathlib
 import shutil
+import glob
 
 import nox
 
@@ -82,3 +83,15 @@ def setup_gitlint(session):
         external=True
     )
     session.run("gitlint", "install-hook", external=True)
+
+@nox.session
+def format(session):
+    """Format all C and header files with clang-format."""
+    c_files = glob.glob("Components/src/**/*.c", recursive=True)
+    h_files = glob.glob("Components/src/**/*.h", recursive=True)
+    files = c_files + h_files
+
+    if not files:
+        session.error("No C or header files found to format.")
+
+    session.run("clang-format", "-i", *files, external=True)
