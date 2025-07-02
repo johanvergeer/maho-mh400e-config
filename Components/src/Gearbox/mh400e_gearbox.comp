@@ -59,8 +59,8 @@ option singleton yes;
 
 static float g_last_spindle_speed = 0;
 
-static tree_node_t *g_tree_rpm = NULL;
-static tree_node_t *g_tree_mask = NULL;
+static TreeNodeT *g_tree_rpm = NULL;
+static TreeNodeT *g_tree_mask = NULL;
 
 static bool g_setup_done = false;
 
@@ -80,7 +80,7 @@ FUNCTION(setup)
      * the value represents the index of the key in our gears array. So
      * we'll put things together the way we need them for the tree generation
      */
-    pair_t temp[MH400E_NUM_GEARS];
+    PairT temp[MH400E_NUM_GEARS];
     for (i = 0; i < MH400E_NUM_GEARS; i++)
     {
         temp[i].key = mh400e_gears[i].key;
@@ -164,7 +164,7 @@ FUNCTION(_)
         }
 
         /* determine and update current spindle speed information */
-        pair_t *speed = get_current_gear(g_tree_mask);
+        PairT *speed = get_current_gear(g_tree_mask);
         if (speed != NULL)
         {
             spindle_speed_out = (float)speed->key;
@@ -179,7 +179,7 @@ FUNCTION(_)
 
         /* We need to quantize the requested speed to see if our current
          * gear already matches it */
-        pair_t *new_gear = select_gear_from_rpm(g_tree_rpm,
+        PairT *new_gear = select_gear_from_rpm(g_tree_rpm,
                                                 spindle_speed_in_abs);
         /* Current speed already matches the requested speed, nothing to do */
         if (new_gear->key == spindle_speed_out)

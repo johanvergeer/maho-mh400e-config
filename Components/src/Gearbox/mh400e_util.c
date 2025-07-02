@@ -13,8 +13,15 @@ functions directly in the header files.
  * For our use case it's anyway not a problem, because the trees are
  * built up during intialzation and not modified anymore.
  */
-static tree_node_t *tree_node_allocate(unsigned key, unsigned value) {
-    tree_node_t *tmp = (tree_node_t *)hal_malloc(sizeof(tree_node_t));
+#include "mh400e_util.h"
+
+#include "mh400e_common.h"
+
+#include <math.h>
+#include <stddef.h>
+
+static TreeNodeT *tree_node_allocate(unsigned key, unsigned value) {
+    TreeNodeT *tmp = (TreeNodeT *)hal_malloc(sizeof(TreeNodeT));
     if (tmp == NULL) {
         rtapi_print_msg(RTAPI_MSG_ERR, "MH400E_GEARBOX: failed to allocate memory for tree node!");
         return NULL;
@@ -26,26 +33,23 @@ static tree_node_t *tree_node_allocate(unsigned key, unsigned value) {
     return tmp;
 };
 
-/* Find the key of the left leaf node. */
-static int tree_leaf_left(tree_node_t *node) {
-    tree_node_t *temp = node;
+static int tree_leaf_left(TreeNodeT *node) {
+    TreeNodeT *temp = node;
     while (temp->left != NULL) {
         temp = temp->left;
     }
     return temp->key;
 }
 
-/* Find the key of the right leaf node. */
-static int tree_leaf_right(tree_node_t *node) {
-    tree_node_t *temp = node;
+static int tree_leaf_right(TreeNodeT *node) {
+    TreeNodeT *temp = node;
     while (temp->right != NULL) {
         temp = temp->right;
     }
     return temp->key;
 }
 
-/* Build up a tree from a sorted array. */
-static tree_node_t *tree_from_sorted_array(pair_t *array, size_t length) {
+static TreeNodeT *tree_from_sorted_array(const PairT *array, const size_t length) {
     int i;
     unsigned p = 1;
 
@@ -54,7 +58,7 @@ static tree_node_t *tree_from_sorted_array(pair_t *array, size_t length) {
         p = p << 1;
     }
 
-    tree_node_t *ptr[p];
+    TreeNodeT *ptr[p];
     for (i = 0; i < p; i++) {
         ptr[i] = NULL;
     }
@@ -70,7 +74,7 @@ static tree_node_t *tree_from_sorted_array(pair_t *array, size_t length) {
             /* three cases */
             if (ptr[i] && ptr[i + 1]) /* (leaf, leaf) */
             {
-                tree_node_t *dn = tree_node_allocate(0, 0);
+                TreeNodeT *dn = tree_node_allocate(0, 0);
                 if (dn == NULL) {
                     /* Fatal: allocation failed, error message will
                      * be printed by the allocate function. */
@@ -95,11 +99,7 @@ static tree_node_t *tree_from_sorted_array(pair_t *array, size_t length) {
     return ptr[0];
 }
 
-/* Return tree node by the given key.
- * If no exact match of the key was found, return the closest available.
- * This is useful when we get spindle rpm values as user in put, but
- * need to quantize them to the speeds supported by the machine. */
-static tree_node_t *tree_search_closest_match(tree_node_t *root, unsigned key) {
+static TreeNodeT *tree_search_closest_match(TreeNodeT *root, unsigned key) {
     if (root == NULL) {
         return NULL;
     }
@@ -116,10 +116,8 @@ static tree_node_t *tree_search_closest_match(tree_node_t *root, unsigned key) {
     return tree_search_closest_match(root->left, key);
 }
 
-/* Return tree node by the given key, if there is no exact match (i.e.
- * key not found), return NULL. */
-static tree_node_t *tree_search(tree_node_t *root, unsigned key) {
-    tree_node_t *result = tree_search_closest_match(root, key);
+static TreeNodeT *tree_search(TreeNodeT *root, unsigned key) {
+    TreeNodeT *result = tree_search_closest_match(root, key);
     if ((result != NULL) && (result->key == key)) {
         return result;
     }
@@ -127,14 +125,13 @@ static tree_node_t *tree_search(tree_node_t *root, unsigned key) {
 }
 
 /* Helper function for array sorting. */
-static void swap_elements(pair_t *p1, pair_t *p2) {
-    pair_t tmp = *p1;
+static void swap_elements(PairT *p1, PairT *p2) {
+    PairT tmp = *p1;
     *p1 = *p2;
     *p2 = tmp;
 }
 
-/* Simple bubble sort to get our gear arrays in order. */
-static void sort_array_by_key(pair_t array[], size_t length) {
+static void sort_array_by_key(PairT array[], size_t length) {
     int i, j;
     for (i = 0; i < length - 1; i++) {
         for (j = 0; j < length - i - 1; j++) {
@@ -145,8 +142,8 @@ static void sort_array_by_key(pair_t array[], size_t length) {
     }
 }
 
-static pair_t *select_gear_from_rpm(tree_node_t *tree, float rpm) {
-    tree_node_t *result;
+static PairT *select_gear_from_rpm(TreeNodeT *tree, float rpm) {
+    TreeNodeT *result;
 
     /* handle two cases that do not need extra searching */
     if (rpm <= 0) {

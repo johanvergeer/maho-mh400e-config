@@ -54,9 +54,9 @@ option singleton yes;
 
 static unsigned g_last_spindle_speed = 0;
 
-static pin_group_t g_backgear;
-static pin_group_t g_midrange;
-static pin_group_t g_input_stage;
+static PinGroupT g_backgear;
+static PinGroupT g_midrange;
+static PinGroupT g_input_stage;
 
 static bool g_setup_done = false;
 
@@ -89,7 +89,7 @@ FUNCTION(setup)
 {
     /* grabbing the pin pointers in EXTRA_SETUP did not work because the
      * component did not seem to be fully initializedt there */
-    g_backgear = (pin_group_t)
+    g_backgear = (PinGroupT)
     {
         &(reducer_left),
         &(reducer_right),
@@ -97,7 +97,7 @@ FUNCTION(setup)
         &(reducer_left_center)
     };
 
-    g_midrange = (pin_group_t)
+    g_midrange = (PinGroupT)
     {
         &middle_left,
         &middle_right,
@@ -105,7 +105,7 @@ FUNCTION(setup)
         &middle_left_center
     };
 
-    g_input_stage = (pin_group_t)
+    g_input_stage = (PinGroupT)
     {
         &input_left,
         &input_right,
@@ -116,7 +116,7 @@ FUNCTION(setup)
     g_last_stop_spindle_gui = sim_stop_spindle_gui;
 }
 
-static void set_pingroup(pin_group_t *group, unsigned char pins)
+static void set_pingroup(PinGroupT *group, unsigned char pins)
 {
     int i;
     for (i = 0; i < MH400E_PINS_IN_GROUP; i++)

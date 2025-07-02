@@ -11,12 +11,12 @@ functions directly in the header files.
 #include <rtapi.h>
 
 /* Binary search tree node. */
-typedef struct tree_node {
+typedef struct TreeNode {
     unsigned key;
     unsigned value;
-    struct tree_node *left;
-    struct tree_node *right;
-} tree_node_t;
+    struct TreeNode *left;
+    struct TreeNode *right;
+} TreeNodeT;
 
 /* Allocate a tree node and assign it the given key and value.
  *
@@ -26,29 +26,29 @@ typedef struct tree_node {
  * For our use case it's anyway not a problem, because the trees are
  * built up during intialzation and not modified anymore.
  */
-static tree_node_t *tree_node_allocate(unsigned key, unsigned value);
+static TreeNodeT *tree_node_allocate(unsigned key, unsigned value);
 
 /* Find the key of the left leaf node. */
-static int tree_leaf_left(tree_node_t *node);
+static int tree_leaf_left(TreeNodeT *node);
 
 /* Find the key of the right leaf node. */
-static int tree_leaf_right(tree_node_t *node);
+static int tree_leaf_right(TreeNodeT *node);
 
 /* Build up a tree from a sorted array. */
-static tree_node_t *tree_from_sorted_array(pair_t *array, size_t length);
+static TreeNodeT *tree_from_sorted_array(const PairT *array, size_t length);
 
 /* Return tree node by the given key.
  * If no exact match of the key was found, return the closest available.
  * This is useful when we get spindle rpm values as user in put, but
  * need to quantize them to the speeds supported by the machine. */
-static tree_node_t *tree_search_closest_match(tree_node_t *root, unsigned key);
+static TreeNodeT *tree_search_closest_match(TreeNodeT *root, unsigned key);
 
 /* Return tree node by the given key, if there is no exact match (i.e.
  * key not found), return NULL. */
-static tree_node_t *tree_search(tree_node_t *root, unsigned key);
+static TreeNodeT *tree_search(TreeNodeT *root, unsigned key);
 
 /* Simple bubble sort to get our gear arrays in order. */
-static void sort_array_by_key(pair_t array[], size_t length);
+static void sort_array_by_key(PairT array[], size_t length);
 
 /* Find the closest matching gear that is supported by the MH400E.
  *
@@ -64,6 +64,6 @@ static void sort_array_by_key(pair_t array[], size_t length);
  * Returns speed "pair" where rpm is stored in the "key" and the pin bitmask
  * is stored in "value".
  */
-static pair_t *select_gear_from_rpm(tree_node_t *tree, float rpm);
+static PairT *select_gear_from_rpm(TreeNodeT *tree, float rpm);
 
 #endif //__MH400E_UTIL_H__

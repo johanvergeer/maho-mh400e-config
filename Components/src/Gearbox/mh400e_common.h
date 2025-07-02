@@ -5,13 +5,13 @@
 #define MH400E_PINS_IN_GROUP 4
 typedef struct {
     hal_bit_t *p[MH400E_PINS_IN_GROUP];
-} pin_group_t;
+} PinGroupT;
 
 /* description of a particular gear/speed setting */
 typedef struct {
     unsigned key;
     unsigned value;
-} pair_t;
+} PairT;
 
 /* Each shaft is described by 4 bits:
  *                3        2       1      0
@@ -26,7 +26,7 @@ typedef struct {
 #define MH400E_STAGE_IS_LEFT_CENTER(mask) ((mask >> 3) & 1)
 
 /* lookup table from rpm to gearbox status pin values */
-static pair_t mh400e_gears[] = {
+static PairT mh400e_gears[] = {
     /* rpm   bitmask                msb 11 10 9 8 7 6 5 4 3 2 1 0 lsb */
     {0, 4},       /* neutral           0 1 0 0 */
     {80, 1097},   /*   0 1 0 0 0 1 0 0 1 0 0 1 */
@@ -59,7 +59,7 @@ static pair_t mh400e_gears[] = {
 #define MH400E_STAGE_POS_RIGHT 2 /* 0010 */
 
 /* total number of selectable gears including neutral */
-#define MH400E_NUM_GEARS (sizeof(mh400e_gears) / sizeof(pair_t))
+#define MH400E_NUM_GEARS (sizeof(mh400e_gears) / sizeof(PairT))
 /* max gear index in array */
 #define MH400E_MAX_GEAR_INDEX MH400E_NUM_GEARS - 1
 /* index of neutral gear */

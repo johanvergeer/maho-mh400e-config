@@ -16,13 +16,13 @@ static void update_current_pingroup_masks(void);
 /* Combine masks from each pin group to a value representing the current
  * gear setting. A return of NULL means that a corresponding value could
  * not be found, which may indicate a gearshift being in progress- */
-static pair_t *get_current_gear(tree_node_t *tree);
+static PairT *get_current_gear(TreeNodeT *tree);
 
 /* Start gear shifting, parameter specifies the target gear that we want
  * to shift to.
  * ATTENTION: this function will set the vlaue of the start_gear_shift pin
  * and also start twitching. */
-static void gearshift_start(pair_t *target_gear, long period);
+static void gearshift_start(PairT *target_gear, long period);
 
 /* Call this function once per each thread cycle to handle gearshifting,
  * implies that gearshift_start() has been called in order to set the
