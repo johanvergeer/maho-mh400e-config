@@ -1,0 +1,4 @@
+#ifndef GEARBOX_LOGIC_H
+#define GEARBOX_LOGIC_H
+
+#endif // GEARBOX_LOGIC_H
