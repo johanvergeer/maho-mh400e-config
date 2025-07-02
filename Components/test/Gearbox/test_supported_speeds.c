@@ -1,7 +1,5 @@
-#include "supported_speeds.h"
+#include "gearbox_logic.h"
 #include "unity.h"
-
-#include <stdbool.h>
 
 void setUp(void) {}
 
@@ -28,7 +26,10 @@ void test_get_bitmask_from_rpm_returns_bitmask_when_found(void) {
 }
 
 void test_create_bitmask_from_gearbox_state(void) {
-    GearboxMicroSwitchState state = {0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1};
+    GearboxMicroSwitchState state = {
+        (CurrentAxisMicroSwitchState){0, 1, 0, 0}, (CurrentAxisMicroSwitchState){0, 1, 0, 0},
+        (CurrentAxisMicroSwitchState){1, 0, 0, 1}
+    };
 
     TEST_ASSERT_EQUAL(1097, create_bitmask_from_gearbox_state(state));
 }
