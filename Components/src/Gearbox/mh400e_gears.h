@@ -1,7 +1,7 @@
 /* Functions related to gear switching. */
 
-#ifndef __MH400E_GEARS_H__
-#define __MH400E_GEARS_H__
+#ifndef MH400E_GEARS_H
+#define MH400E_GEARS_H
 
 #include "mh400e_common.h"
 
@@ -37,4 +37,4 @@ static void gearbox_handle_estop(void);
 /* Returns true if a gear shifting operation is currently in progress */
 static bool gearshift_in_progress(void);
 
-#endif //__MH400E_GEARS_H__
+#endif // MH400E_GEARS_H

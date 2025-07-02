@@ -1,11 +1,11 @@
 /* Implementation of the twitching functionality. */
 
-#ifndef __MH400E_TWITCH_H__
-#define __MH400E_TWITCH_H__
 
 #include "mh400e_common.h"
 
 #include <rtapi.h>
+#ifndef MH400E_TWITCH_H
+#define MH400E_TWITCH_H
 
 /* Call only once, sets up the global twitch state data structure */
 FUNCTION(twitch_setup);
@@ -28,4 +28,4 @@ static void twitch_stop(long period);
 /* Returns true if stop twitching operation completed. */
 static bool twitch_stop_completed(void);
 
-#endif //__MH400E_TWITCH_H__
+#endif // MH400E_TWITCH_H

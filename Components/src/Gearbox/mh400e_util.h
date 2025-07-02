@@ -5,8 +5,8 @@ sources, so we have to go the somewhat ugly way of implementing those
 functions directly in the header files.
 */
 
-#ifndef __MH400E_UTIL_H__
-#define __MH400E_UTIL_H__
+#ifndef MH400E_UTIL_H
+#define MH400E_UTIL_H
 
 #include <rtapi.h>
 
@@ -66,4 +66,4 @@ static void sort_array_by_key(PairT array[], size_t length);
  */
 static PairT *select_gear_from_rpm(TreeNodeT *tree, float rpm);
 
-#endif //__MH400E_UTIL_H__
+#endif // MH400E_UTIL_H

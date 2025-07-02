@@ -1,5 +1,5 @@
-#ifndef __MH400E_COMMON_H__
-#define __MH400E_COMMON_H__
+#ifndef MH400E_COMMON_H
+#define MH400E_COMMON_H
 
 /* structure that allows to group pins together */
 #define MH400E_PINS_IN_GROUP 4
@@ -92,4 +92,4 @@ static PairT mh400e_gears[] = {
 /* generic state function */
 typedef void (*statefunc)(long period);
 
-#endif //__MH400E_COMMON_H__
+#endif // MH400E_COMMON_H
