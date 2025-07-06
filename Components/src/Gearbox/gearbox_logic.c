@@ -69,3 +69,9 @@ bool gearshift_needs_reverse(
         return false;
     return !(target_state.center && (current_state.left_center || current_state.right));
 }
+
+bool should_slow_down(
+    CurrentAxisMicroSwitchState current_state, TargetAxisMicroSwitchState target_state
+) {
+    return target_state.center == true && current_state.center == true;
+}
