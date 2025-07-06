@@ -72,7 +72,7 @@ def install_components(session: nox.Session) -> None:
 @nox.session
 def setup_gitlint(session):
     """Install gitlint + spacy + model via pipx."""
-    session.run("pipx", "install", "gitlint", external=True)
+    session.run("pipx", "install", "--include-deps", "gitlint", external=True)
     session.run("pipx", "inject", "gitlint", "spacy", external=True)
     session.run(
         "pipx",
