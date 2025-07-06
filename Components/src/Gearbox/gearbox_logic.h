@@ -24,10 +24,10 @@ typedef struct {
     bool left;
 } CurrentAxisMicroSwitchState;
 
-typedef struct {
-    bool center;
-    bool right;
-    bool left;
+typedef enum {
+    TARGET_AXIS_MICROSWITCH_STATE_LEFT = 0,
+    TARGET_AXIS_MICROSWITCH_STATE_CENTER = 1,
+    TARGET_AXIS_MICROSWITCH_STATE_RIGHT = 2,
 } TargetAxisMicroSwitchState;
 
 typedef struct {

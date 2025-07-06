@@ -63,15 +63,18 @@ unsigned create_bitmask_from_gearbox_state(const GearboxMicroSwitchState state) 
 bool gearshift_needs_reverse(
     const CurrentAxisMicroSwitchState current_state, const TargetAxisMicroSwitchState target_state
 ) {
-    if (target_state.right)
+    if (target_state == TARGET_AXIS_MICROSWITCH_STATE_RIGHT)
         return true;
-    if (target_state.left)
+    if (target_state == TARGET_AXIS_MICROSWITCH_STATE_LEFT)
         return false;
-    return !(target_state.center && (current_state.left_center || current_state.right));
+    return !(
+        target_state == TARGET_AXIS_MICROSWITCH_STATE_CENTER &&
+        (current_state.left_center || current_state.right)
+    );
 }
 
 bool should_slow_down(
     CurrentAxisMicroSwitchState current_state, TargetAxisMicroSwitchState target_state
 ) {
-    return target_state.center == true && current_state.center == true;
+    return target_state == TARGET_AXIS_MICROSWITCH_STATE_CENTER && current_state.center == true;
 }
