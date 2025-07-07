@@ -36,6 +36,12 @@ typedef struct {
     CurrentAxisMicroSwitchState reducer;
 } GearboxMicroSwitchState;
 
+typedef struct {
+    TargetAxisMicroSwitchState input;
+    TargetAxisMicroSwitchState middle;
+    TargetAxisMicroSwitchState reducer;
+} TargetGearboxMicroSwitchesState;
+
 /**
  * @brief Define whether the gearshift needs to be reversed
  *
@@ -124,5 +130,21 @@ unsigned create_bitmask_from_gearbox_state(GearboxMicroSwitchState state);
  * @return true if the target is the mid position, false otherwise
  */
 bool enable_select_mid_position(TargetAxisMicroSwitchState target_state);
+
+/**
+ * Determine the target gearbox microswitch state for a given spindle speed.
+ *
+ * Maps the requested RPM to a predefined gearbox state using threshold values.
+ * Returns a neutral state if RPM is zero, a fallback state for values above the
+ * maximum defined range, and the corresponding state otherwise.
+ *
+ * The returned state indicates the desired position of the input, center, and
+ * reducer gear microswitches to achieve the closest matching gear ratio.
+ *
+ * @param requested_rpm: Requested spindle speed in revolutions per minute.
+ *
+ * @return The target gearbox microswitch state to reach the desired speed.
+ */
+TargetGearboxMicroSwitchesState get_target_state(float requested_rpm);
 
 #endif // GEARBOX_LOGIC_H
