@@ -26,7 +26,6 @@ set(
     SOURCE_FILES
     ${LUBRICATION_COMP}/lubrication_logic.c
     ${GEARBOX_COMP}/gearbox_logic.c
-    ${GEARBOX_COMP}/supported_speeds.c
 )
 
 if (CMAKE_BUILD_TYPE STREQUAL "Test")
