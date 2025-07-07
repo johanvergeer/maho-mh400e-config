@@ -62,6 +62,7 @@ typedef struct {
 bool gearshift_needs_reverse(
     CurrentAxisMicroSwitchState current_state, TargetAxisMicroSwitchState target_state
 );
+
 typedef struct {
     unsigned rpm;
     unsigned bitmask;
@@ -113,18 +114,15 @@ unsigned get_rpm_from_bitmask(unsigned bitmask);
 unsigned create_bitmask_from_gearbox_state(GearboxMicroSwitchState state);
 
 /**
- * Determine whether the gear motor should slow down to avoid overshooting the center gear position.
+ * Determine whether the "Enable mid position" relay (11K3) should be enabled.
  *
- * Slowing down is only relevant when the target position is `center`. In that case,
- * the motor should decelerate when the `center` micro switch is active and stop
- * as soon as the `center_left` micro switch changes state.
+ * This will slow down the motor when it reaches the mid-position micro switch
+ * (11S4,11S9 or 11S14) causing the current to only run through the resistor
+ * (11R1, 11R2 or 11R3) slowing the motor down.
  *
- * @param current_state The current micro switch state for this axis
  * @param target_state The desired micro switch state for this axis
- * @return true if the motor should slow down, false otherwise
+ * @return true if the target is the mid position, false otherwise
  */
-bool should_slow_down(
-    CurrentAxisMicroSwitchState current_state, TargetAxisMicroSwitchState target_state
-);
+bool enable_select_mid_position(TargetAxisMicroSwitchState target_state);
 
 #endif // GEARBOX_LOGIC_H

@@ -73,8 +73,6 @@ bool gearshift_needs_reverse(
     );
 }
 
-bool should_slow_down(
-    CurrentAxisMicroSwitchState current_state, TargetAxisMicroSwitchState target_state
-) {
-    return target_state == TARGET_AXIS_MICROSWITCH_STATE_CENTER && current_state.center == true;
+bool enable_select_mid_position(const TargetAxisMicroSwitchState target_state) {
+    return target_state == TARGET_AXIS_MICROSWITCH_STATE_CENTER;
 }
